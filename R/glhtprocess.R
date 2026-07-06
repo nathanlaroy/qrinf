@@ -50,7 +50,7 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", ...){
   } else {
     lambdas <- estrellaTables$lambda[1:13]
     lambdasIndex <- which.max(ifelse(lambdas < lambda, lambdas, -Inf))
-    if (lambda > last(lambdas)){
+    if (lambda > tail(lambdas, n=1)){
       lambda <- 361
       warning("Lambda > 361, critical value determined for lambda = 361.")
     }
