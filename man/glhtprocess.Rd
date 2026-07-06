@@ -65,7 +65,7 @@ TBD
   }
 }
 \references{
-Koenker, R. (2005). Quantile regression. Cambridge University Press.\\
+Koenker, R. (2005). Quantile regression. Cambridge University Press.\n
 Laroy, N, & De Neve, J. (2026) Quantile regression: a tutorial for psychologists. Unpublished.
 }
 \author{
