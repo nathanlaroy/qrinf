@@ -17,8 +17,7 @@ vector of a multiple quantile regression model and on the quantile regression pr
 \packageAuthor{qrinf}
 }
 \references{
-Koenker, R. (2005). Quantile regression. Cambridge University Press.\n
-Laroy, N., & De Neve, J. (2026). Quantile regression: a tutorial for psychologists. Unpublished.
+Koenker, R. (2005). Quantile regression. Cambridge University Press.
 }
 \keyword{package}
 
