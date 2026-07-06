@@ -12,29 +12,15 @@ regression coefficient vector, \eqn{\xi}, of the form \eqn{H_0: R\xi = r}.
 glhtxi(taus, form, data, R, r, se = "nid", ...)
 }
 \arguments{
-  \item{taus}{
-  A \eqn{1\times m} vector (i.e., row vector) of ordered quantile criteria in the open interval \eqn{(0,1)}.
-}
-  \item{form}{
-  An object of class "[formula]".
-}
-  \item{data}{
-  An object of class "[data.frame]".
-}
-  \item{R}{
-  A \eqn{q\times m(p+1)} restriction matrix to pre-multiply the coefficient vector, \eqn{\xi}.
-}
-  \item{r}{
-  A \eqn{q\times 1} null identity vector (i.e., column vector).
-}
-  \item{se}{
-  A character string determining the type of standard errors used for the quantile regression model.
+  \item{taus}{A \eqn{1\times m} vector (i.e., row vector) of ordered quantile criteria in the open interval \eqn{(0,1)}.}
+  \item{form}{An object of class "[formula]".}
+  \item{data}{An object of class "[data.frame]".}
+  \item{R}{A \eqn{q\times m(p+1)} restriction matrix to pre-multiply the coefficient vector, \eqn{\xi}.}
+  \item{r}{A \eqn{q\times 1} null identity vector (i.e., column vector).}
+  \item{se}{A character string determining the type of standard errors used for the quantile regression model.
   Options are `"iid"`, `"nid"`, `"boot"`, `"ker"` and `"extreme"`. Defaults to `"nid"`.
-  See \link[quantreg]{summary.rq} for more information.
-}
-  \item{\dots}{
-  Optional arguments to rq.
-}
+  See \link[quantreg]{summary.rq} for more information.}
+  \item{\dots}{Optional arguments to rq.}
 }
 \details{
 Dimensions checks are performed on `R` and `r`, such that \eqn{R\xi-r} is a legal matrix operation.
