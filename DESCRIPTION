@@ -11,4 +11,5 @@ Imports:
   quantreg (>= 6.1.0),
   SparseM (>= 1.84-2.0)
 Depends:
-  quantreg
+    quantreg (>= 6.1.0),
+    R (>= 3.5)
