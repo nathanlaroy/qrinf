@@ -5,8 +5,5 @@ Version: 1.0
 Date: 2026-07-06
 Authors@R: c(person("Nathan", "Laroy", role = c("aut", "cre"),
                     email = "laroynathan@gmail.com"))
-Description: Provides convenience functions for conducting general linear hypothesis tests 
-on quantile regression models run with the quantreg package. It provides functionality for 
-inference regarding a vector of quantile regression coefficients for distinct quantile criteria, 
-and inference regarding the quantile regression process.
+Description: Provides convenience functions for conducting general linear hypothesis tests on quantile regression models run with the quantreg package. It provides functionality for inference regarding a vector of quantile regression coefficients for distinct quantile criteria, and inference regarding the quantile regression process.
 License: GPL-2
