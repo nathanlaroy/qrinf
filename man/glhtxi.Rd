@@ -1,6 +1,5 @@
 \name{glhtxi}
 \alias{glhtxi}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 General Linear Hypothesis Tests On QR Models
 }
