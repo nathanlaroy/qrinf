@@ -1,7 +1,5 @@
 glhtprocess <-
 function(taus, form, data, R, r, griddensity = 300, se = "nid", ...){
-  load("estrellaTables.rda")
-  
   # Preliminaries
   taus <- seq(taus[1], taus[2], length.out=griddensity)
   modFull <- rq(formula=form, data=data, tau=taus)
