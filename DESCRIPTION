@@ -10,3 +10,5 @@ License: GPL-2
 Imports:
   quantreg (>= 6.1.0),
   SparseM (>= 1.84-2.0)
+Depends:
+  quantreg
