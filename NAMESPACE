@@ -1,2 +1,2 @@
-export(estrellaTables, glhtprocess, glhtxi)
+export(glhtprocess, glhtxi)
 import(quantreg)
