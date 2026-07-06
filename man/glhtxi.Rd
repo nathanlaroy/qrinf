@@ -59,7 +59,7 @@ Dimensions checks are performed on `R` and `r`, such that \eqn{R\xi-r} is a lega
   }
 }
 \references{
-Koenker, R. (2005). Quantile regression. Cambridge University Press.
+Koenker, R. (2005). Quantile regression. Cambridge University Press.\\
 Laroy, N, & De Neve, J. (2026) Quantile regression: a tutorial for psychologists. Unpublished.
 }
 \author{
