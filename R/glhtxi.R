@@ -1,9 +1,5 @@
 glhtxi <-
 function(taus, form, data, R, r, se = "nid", ...){
-  if(!require("quantreg")){
-    stop("quantreg package is not installed")
-  }
-  
   # Preliminaries
   modFull <- rq(formula=form, data=data, tau=taus)
   summ <- summary(modFull, se = se, cov = T, ...)
