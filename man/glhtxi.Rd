@@ -17,13 +17,16 @@ glhtxi(taus, form, data, R, r, se = "nid", ...)
   \item{R}{A \eqn{q\times m(p+1)} restriction matrix to pre-multiply the coefficient vector, \eqn{\xi}.}
   \item{r}{A \eqn{q\times 1} null identity vector (i.e., column vector).}
   \item{se}{A character string determining the type of standard errors used for the quantile regression model.
-  Options are `"iid"`, `"nid"`, `"boot"`, `"ker"` and `"extreme"`. Defaults to `"nid"`.
+  Options are \code{"iid"}, \code{"nid"}, \code{"boot"}, \code{"ker"} and \code{"extreme"}. Defaults to \code{"nid"}.
   See \link[quantreg]{summary.rq} for more information.}
   \item{\dots}{Optional arguments to rq.}
 }
 \details{
-Dimensions checks are performed on `R` and `r`, such that \eqn{R\xi-r} is a legal matrix operation.
-\eqn{\xi} is constructed under the hood based on the `form` argument.
+\eqn{m} is the number of individual values of quantile criteria, \eqn{\tau}, considered (e.g., for \eqn{\tau\in\{0.25,0.50,0.75\}}, \eqn{m=3})/.
+\eqn{p} is the number of coefficients estimated for any given quantile criterion, excluding the intercept. \eqn{xi} takes the following
+form: \deqn{\xi = \left(\beta(\tau_i)',\dots,\beta(\tau_m)'\right)'}, with \deqn{\beta(\tau_j) = \left(\beta_0(\tau_j),\dots,\beta_p(\tau_j)\right)}.\n
+
+Dimensionality checks are performed on \code{R} and \code{r}, verifying that \eqn{R\xi-r} is a legal matrix operation.
 }
 \value{
   A list containing the following items.
@@ -37,7 +40,7 @@ Dimensions checks are performed on `R` and `r`, such that \eqn{R\xi-r} is a lega
   The observed test statistic.
   }
   \item{q}{
-  The degrees of freedom of the appropriate asymptotic \eqn{\chi^2_q}-distribution (i.e., the rank of `R`).
+  The degrees of freedom of the appropriate asymptotic \eqn{\chi^2_q}-distribution (i.e., the rank of \eqn{R}).
   }
   \item{p.value}{
   The p value of the associated test.
