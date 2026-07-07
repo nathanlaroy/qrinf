@@ -22,11 +22,11 @@ glhtxi(taus, form, data, R, r, se = "nid", ...)
   \item{\dots}{Optional arguments to rq.}
 }
 \details{
-\eqn{m} is the number of individual values of quantile criteria, \eqn{\tau}, considered (e.g., for \eqn{\tau\in\{0.25,0.50,0.75\}}, \eqn{m=3})/.
+\eqn{m} is the number of individual values of quantile criteria, \eqn{\tau}, considered (e.g., for \eqn{\tau\in\{0.25,0.50,0.75\}}, \eqn{m=3}).
 \eqn{p} is the number of coefficients estimated for any given quantile criterion, excluding the intercept. \eqn{\xi} takes the following
-form: \deqn{\xi = \left(\beta(\tau_i)',\dots,\beta(\tau_m)'\right)'}, with \deqn{\beta(\tau_j) = \left(\beta_0(\tau_j),\dots,\beta_p(\tau_j)\right)}.
+form: \deqn{\xi = \left(\beta(\tau_i)',\dots,\beta(\tau_m)'\right)',} with \deqn{\beta(\tau_j) = \left(\beta_0(\tau_j),\dots,\beta_p(\tau_j)\right).}
 
-Dimensionality checks are performed on \code{R} and \code{r}, verifying that \eqn{R\xi-r} is a legal matrix operation.
+Dimensionality checks are performed on \code{R} and \code{r}, verifying that \eqn{R\xi-r} is a legal matrix operation. Returns error if not.
 }
 \value{
   A list containing the following items.
