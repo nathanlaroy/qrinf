@@ -148,4 +148,4 @@ taus <- c(0.05, 0.95)
 glhtprocess(taus = taus, form = form, data = mtcars, R = R, r = r)
 ```
 
-
+We find that the obtained statistic is $T_n=5.26$, which is smaller than the critical value associated with the 10% significance level. So, we fail to reject the null hypothesis even at this liberal significance level.
