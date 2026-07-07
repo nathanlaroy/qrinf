@@ -10,8 +10,8 @@ function(x, form, data){
   taus <- unlist(x)
   tau1 <- taus[1]
   tau2 <- taus[2]
-  modFull_allTau <- rq(formula=form, data=data, tau=taus)
-  summ <- summary(modFull_allTau, se = "nid", cov = T)
+  mod <- rq(formula=form, data=data, tau=taus)
+  summ <- summary(mod, se = "nid", cov = T)
   taus <- taus[order(taus)]
   if (tau1==tau2){
     (min(tau1, tau2) - tau1*tau2) * summ$Hinv %*% summ$J %*% summ$Hinv
