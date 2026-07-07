@@ -60,20 +60,18 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", ...){
       lambda <- 361
       warning("Lambda > 361, critical value determined for lambda = 361.")
     }
-    if (!lambda %in% lambdas){
+    if (!round(lambda, 2) %in% lambdas){
       interpolated <- TRUE
-      lambdasInterval <- lambdas[c(lambdasIndex,lambdasIndex+1)]
-      crits <- estrellaTables[estrellaTables$lambda %in% lambdasInterval & estrellaTables$q == dimR[1],]
-      alphas <- c("10%", "5%", "1%")
-      crit <- lapply(X = alphas,
-                     FUN = .Interpolate, lambdas = lambdas, lambda = lambda,
-                     lambdasInterval = lambdasInterval, lambdasIndex = lambdasIndex, crits = crits)
-      crit <- do.call(rbind, crit)
     } else {
       interpolated <- FALSE
-      crit <- data.frame(alpha = alphas, 
-                         crit = estrellaTables[estrellaTables$lambda==lambda & estrellaTables$q==dimR[1],][c("alpha", "crit")])
     }
+    lambdasInterval <- lambdas[c(lambdasIndex,lambdasIndex+1)]
+    crits <- estrellaTables[estrellaTables$lambda %in% lambdasInterval & estrellaTables$q == dimR[1],]
+    alphas <- c("10%", "5%", "1%")
+    crit <- lapply(X = alphas,
+                   FUN = .Interpolate, lambdas = lambdas, lambda = lambda,
+                   lambdasInterval = lambdasInterval, lambdasIndex = lambdasIndex, crits = crits)
+    crit <- do.call(rbind, crit)
   }
   
   
