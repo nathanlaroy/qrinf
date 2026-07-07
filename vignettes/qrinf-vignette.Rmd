@@ -109,4 +109,43 @@ glhtxi(taus = taus, form = form, data = mtcars,
 
 In the output, we are given a copy of the restriction matrix `$R`, the realized identity under the null `$H0` (i.e., $\boldsymbol{R}\hat{\boldsymbol{\xi}}-\boldsymbol{r}$), the observed test statistic `Tn`, the degrees of freedom `q`, and the p-value `p.value`. Here, $p=0.119$, so we fail to reject the null hypothesis.
 
-We also see that the function has returned a series of warning messages. These all derive from `summary.rq`, which is called under the hood to calculate specific covariance matrices. They indicate that a non-positive density was estimated, which the function dealt with under the hood (i.e., densities cannot be negative). Too many such warnings can indicate a model misspecification problem.
+We also see that the function has returned a series of warning messages. These all derive from `summary.rq`, which is called under the hood to calculate specific covariance matrices. They indicate that a non-positive density was estimated, which the function dealt with under the hood (i.e., densities cannot be negative). Too many such warnings can indicate a model misspecification problem, but a small amount is generally not problematic.
+
+We next illustrate a second example where the null hypothesis consists of several identities. For example, assume the literature states that the effect of each independent variable is exactly 0.25 units smaller for the 25th versus the 75th conditional quantile, conditional on the others. That is, the following set of null hypothesis identities holds:
+
+$$
+H_0:
+\begin{cases}
+  \beta_1(0.25) - \beta_1(0.75) = -0.25\\
+  \beta_2(0.25) - \beta_2(0.75) = -0.25\\
+  \beta_3(0.25) - \beta_3(0.75) = -0.25
+\end{cases}
+$$
+
+We can translate this into the respective `R` and `r` matrices as follows, setting `taus` as well:
+
+```{r}
+R <- rbind(c(0, 1, 0, 0, 0, -1, 0, 0),
+           c(0, 0, 1, 0, 0, 0, -1, 0),
+           c(0, 0, 0, 1, 0, 0, 0, -1))
+r <- cbind(c(-0.25, -0.25, -0.25))
+taus <- c(0.25, 0.75)
+
+glhtxi(taus = taus, form = form, data = mtcars, R = R, r = r)
+```
+
+We find very strong evidence against this null hypothesis, and so choose to reject it. Based on the observed null identity `$H0`, we see that, indeed, none of the equalities are particularly close to 0, which should be the case if the null hypothesis actually holds true. The p-value is practically nil.
+
+## `ghltprocess`: general linear hypothesis tests on $\boldsymbol{\beta}(\tau)$
+
+Based on the plot from before, one might wonder if the effect of `hp` is nil for all quantiles in the unit interval, conditional on `cyl` and `disp`. To test this, we use `glhtprocess`. As before, the function requires one specifies the restriction matrix `R` and null identity `r` (which here takes the form of a function). `R` has length such that $\boldsymbol{R\beta}(\tau)$ is a legal matrix operation. The verbal hypothesis states that $\beta_{\text{hp}}(\tau)$ is constant in $\tau$, namely, $\beta_{\text{hp}}(\tau)=0$. We also need to specify the bounds of the continuous closed quantile interval of interest. We take $[0.05, 0.95]$, trimming off the tails to account for the high uncertainty.
+
+```{r}
+R <- rbind(c(0, 0, 0, 1))
+r <- matrix(c(0))
+taus <- c(0.05, 0.95)
+
+glhtprocess(taus = taus, form = form, data = mtcars, R = R, r = r)
+```
+
+
