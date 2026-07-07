@@ -5,27 +5,30 @@ General Linear Hypothesis Tests On QR Processes
 }
 \description{
 The function carries out a general linear hypothesis test for a quantile regression model
-regarding the null hypothesis \eqn{H_0: R\beta(\tau)=r(\tau)}, for \eqn{\tau\in[\pi_0, \pi_1]\subset(0,1)}.
+regarding the null hypothesis \eqn{H_0: R\beta(\tau)=r(\tau)}, for \eqn{\tau\in[\pi_0, \pi_1]\subsetneq(0,1)}.
 }
 \usage{
 glhtprocess(taus, form, data, R, r, griddensity = 300, se = "nid", ...)
 }
 \arguments{
-  \item{taus}{A vector of length 2 containing the lower and upper bound of the closed sub-interval \eqn{[\pi_0, \pi_1]\subset (0,1)}
+  \item{taus}{A vector of length 2 containing the lower and upper bound of the closed sub-interval \eqn{[\pi_0, \pi_1]\subsetneq (0,1)}
   of quantile criteria of the quantile regression process to which the general linear hypothesis test pertains.}
-  \item{form}{An object of class "[formula]".}
-  \item{data}{An object of class "[data.frame]".}
+  \item{form}{An object of class \link[stats]{formula}.}
+  \item{data}{An object of class \link[base]{data.frame}.}
   \item{R}{A \eqn{q\times m(p+1)} restriction matrix to pre-multiply the coefficient vector.}
   \item{r}{A \eqn{q\times 1} null identity vector, such that \eqn{H_0: R\beta(\tau)=r(\tau)}.}
   \item{griddensity}{An integer representing the number of equidistant quantile criteria to consider
   in the interval defined by `taus`. Default is `300`.}
   \item{se}{A character string determining the type of standard errors used for the quantile regression model.
-  Options are `"iid"`, `"nid"`, `"boot"`, `"ker"` and `"extreme"`. Defaults to `"nid"`. 
+  Options are \code{"iid"}, \code{"nid"}, \code{"boot"}, \code{"ker"} and \code{"extreme"}. Defaults to \code{"nid"}. 
   See \link[quantreg]{summary.rq} for more information.}
   \item{\dots}{Optional arguments to rq.}
 }
 \details{
-TBD
+Dimensionality checks are performed on \code{R} and \code{r}, verifying that \eqn{R\beta(\tau)-r(\tau)} is a legal matrix operation.\n
+
+Critical values are determined based on \eqn{\lamdba=\pi_1(1-\pi_0)/(\tau_0(1-\tau_1))} and retrieved from tabled values. If \eqn{\lambda}
+does not appear in the table, the appropriate critical value is approximated by linear interpolation.
 }
 \value{
   A list containing the following elements.
