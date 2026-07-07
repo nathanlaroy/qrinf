@@ -1,5 +1,11 @@
 glhtprocess <-
 function(taus, form, data, R, r, griddensity = 300, se = "nid", ...){
+  # Preliminary checks
+  if (!all(taus<1 & taus>0)){
+    message <- paste0("Quantile interval is not a proper subset of (0, 1).")
+    stop(message)
+  }
+  
   # Preliminaries
   taus <- seq(taus[1], taus[2], length.out=griddensity)
   modFull <- rq(formula=form, data=data, tau=taus)
