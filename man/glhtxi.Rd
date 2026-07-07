@@ -12,8 +12,8 @@ glhtxi(taus, form, data, R, r, se = "nid", ...)
 }
 \arguments{
   \item{taus}{A \eqn{1\times m} vector (i.e., row vector) of ordered quantile criteria in the open interval \eqn{(0,1)}.}
-  \item{form}{An object of class "[formula]".}
-  \item{data}{An object of class "[data.frame]".}
+  \item{form}{An object of class \link[stats]{formula}.}
+  \item{data}{An object of class \link[base]{data.frame}.}
   \item{R}{A \eqn{q\times m(p+1)} restriction matrix to pre-multiply the coefficient vector, \eqn{\xi}.}
   \item{r}{A \eqn{q\times 1} null identity vector (i.e., column vector).}
   \item{se}{A character string determining the type of standard errors used for the quantile regression model.
@@ -23,8 +23,8 @@ glhtxi(taus, form, data, R, r, se = "nid", ...)
 }
 \details{
 \eqn{m} is the number of individual values of quantile criteria, \eqn{\tau}, considered (e.g., for \eqn{\tau\in\{0.25,0.50,0.75\}}, \eqn{m=3})/.
-\eqn{p} is the number of coefficients estimated for any given quantile criterion, excluding the intercept. \eqn{xi} takes the following
-form: \deqn{\xi = \left(\beta(\tau_i)',\dots,\beta(\tau_m)'\right)'}, with \deqn{\beta(\tau_j) = \left(\beta_0(\tau_j),\dots,\beta_p(\tau_j)\right)}.\n
+\eqn{p} is the number of coefficients estimated for any given quantile criterion, excluding the intercept. \eqn{\xi} takes the following
+form: \deqn{\xi = \left(\beta(\tau_i)',\dots,\beta(\tau_m)'\right)'}, with \deqn{\beta(\tau_j) = \left(\beta_0(\tau_j),\dots,\beta_p(\tau_j)\right)}.
 
 Dimensionality checks are performed on \code{R} and \code{r}, verifying that \eqn{R\xi-r} is a legal matrix operation.
 }
