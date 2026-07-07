@@ -1,5 +1,14 @@
 glhtxi <-
 function(taus, form, data, R, r, se = "nid", ...){
+  # Preliminary checks
+  if (!all(taus<1 & taus>0)){
+    faultytau <- taus[!(taus<1 & taus>0)]
+    faultytau <- faultytau[order(faultytau)]
+    message <- paste0("Following elements of 'taus' not in a proper subset of (0,1): ", 
+                      paste(as.character(faultytau), collapse=", "))
+    stop(message)
+  }
+  
   # Preliminaries
   modFull <- rq(formula=form, data=data, tau=taus)
   summ <- summary(modFull, se = se, cov = T, ...)
