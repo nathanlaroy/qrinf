@@ -108,3 +108,5 @@ glhtxi(taus = taus, form = form, data = mtcars,
 ```
 
 In the output, we are given a copy of the restriction matrix `$R`, the realized identity under the null `$H0` (i.e., $\boldsymbol{R}\hat{\boldsymbol{\xi}}-\boldsymbol{r}$), the observed test statistic `Tn`, the degrees of freedom `q`, and the p-value `p.value`. Here, $p=0.119$, so we fail to reject the null hypothesis.
+
+We also see that the function has returned a series of warning messages. These all derive from `summary.rq`, which is called under the hood to calculate specific covariance matrices. They indicate that a non-positive density was estimated, which the function dealt with under the hood (i.e., densities cannot be negative). Too many such warnings can indicate a model misspecification problem.
