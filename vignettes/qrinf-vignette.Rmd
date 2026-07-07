@@ -1,0 +1,110 @@
+---
+title: "General Linear Hypothesis Tests For Quantile Regression Models Using qrinf"
+author: "Nathan Laroy"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+header-includes:
+   - \usepackage{bm}
+vignette: >
+  %\VignetteIndexEntry{General Linear Hypothesis Tests For Quantile Regression Models Using qrinf}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## General Linear Hypotheses
+
+The quantile regression framework, like its linear regression counterpart, allows to test general linear hypotheses of various sorts using Wald-type statistics. Let a multiple quantile regression model take the following form:
+
+$$
+Q_Y(\tau\mid \boldsymbol{X}) = \boldsymbol{X\beta}(\tau),
+$$
+
+with $\mathbf{X}$ a covariate row vector of length $p+1$, and $\boldsymbol{\beta}(\tau)$ a coefficient column vector of length $p+1$, first element $\beta_0(\tau)$. Consequently, define
+
+$$
+\boldsymbol{\xi} = \left(\boldsymbol{\beta}(\tau_1)', \dots, \boldsymbol{\beta}(\tau_m)'\right)',
+$$
+
+and $\boldsymbol{\beta}(\tau_j)=\left(\beta_0(\tau_j), \dots, \beta_p(\tau_j)\right)$. One may formulate two types of general linear hypotheses based on this model. The first concerns the extended coefficient vector $\boldsymbol{\xi}$ and takes the canonical form:
+
+$$
+H_0: \boldsymbol{R\xi}=\boldsymbol{r}.
+$$
+
+General linear hypotheses of this form allow to assess verbal hypotheses such as "the first and third quartile regression of $Y$ on $\mathbf{X}$ yield identical coefficients", or "the population value of $\beta_2(\tau)$ for the 90th percentile regression is exactly double that of the 10th percentile regression". That is, they involve **point estimates** of quantile regression coefficients for a finite set of quantile criteria.
+
+A practically challenging aspect of conducting a Wald-type inferential test for this type of null hypothesis pertains to the estimation of the asymptotic covariance of $\boldsymbol{R}\hat{\boldsymbol\xi}-\boldsymbol{r}$. Recurring null hypotheses, such as those which test, e.g., $H_0: \beta_1(\tau)=0$, have been implemented in `quantreg` using existing convenience functions (e.g., `anova`). The `qrinf` package contains a function, `glhtxi`, which was specifically developed to simplify matters for applied researchers whenever they wish to assess a null hypothesis which does not enjoy a standard implementation in `quantreg`, and so for which the asymptotic covariance matrix would have to be manually estimated.
+
+A second type of general linear hypothesis takes the following form:
+
+$$
+H_0: \boldsymbol{R\beta}(\tau)=\boldsymbol{r}(\tau),
+$$
+
+with $\boldsymbol{r}(\tau)$ a vector-valued function of $\tau$. Contrary to the previous case, general linear hypotheses pertain here to continuous closed intervals of quantiles (i.e., $\tau\in[\tau_a,\tau_b]\subsetneq(0,1)$). They allow to assess verbal hypotheses which pertain to the quantile regression process, e.g., "$\beta_3(\tau)$ is constant in the interval $[0.5, 0.95]$", or "$\beta_1(\tau)$ changes sign, but not magnitude, for $\tau>0.5$ compared to $\tau<0.5$".
+
+As before, `quantreg` includes some convenient implementations of specific instances of general linear hypotheses concerning the quantile regression process (namely, those which assess null hypotheses of location-shift and location-scale). The `qrinf` package contains a function, `glhtprocess`, which was developed to allow applied researchers to conduct a hypothesis of this sort, without having to write a bespoke script.
+
+The remainder of this vignette describes `glhtxi` and `glhtprocess` in more detail, providing code examples of their usage.
+
+## `glhtxi`: general linear hypothesis tests on $\xi$.
+
+In order to make use of the `glhtxi` function, one first loads the `quantreg` and `qrinf` packages (after having installed them). The former can be installed using `install.packages("quantreg")`, while the latter is best installed using `pak::pak("nathanlaroy/qrinf")`.
+
+```{r}
+# Load
+library(qrinf)
+```
+
+We will rely on the `mtcars` data set to illustrate the uses of `glhtxi`. Below is part of the `data.frame`.
+
+```{r}
+knitr::kable(head(mtcars))
+```
+
+Suppose we wish to model the miles/(US) gallon (`mpg`) of the cars in function of number of cylinders (`cyl`), displacement (cu.in.) (`disp`) and gross horsepower (`hp`). If we estimate a quantile regression model for a dense grid of quantile criteria and plot the resulting sample paths of the coefficient estimators, we find the following:
+
+```{r}
+rqmod <- rq(mpg ~ cyl + disp + hp, tau = seq(0.05, 0.95, 0.01), data = mtcars)
+plot(rqmod)
+```
+
+Suppose the literature states that the effect of `cyl` is twice in magnitude for the 80th percentile as compared to the 20th percentile, controlled for `disp` and `hp`. Based on the visualization, it seems like this could be the case, but we are skeptical and wish to quantify the statistical evidence against this statement. To that end, we can rephrase the verbal hypothesis as a linear restriction on $\boldsymbol{\xi}$. Specifically, the null hypothesis becomes:
+
+$$
+\begin{align*}
+H_0: &&2\beta_{\text{cyl}}(0.2) &= \beta_{\text{cyl}}(0.8)\\
+&&2\beta_1(0.2) - \beta_1(0.8) &= 0
+\end{align*}
+$$
+
+In order to proceed, we need to translate the above symbolic representation into a restriction matrix `R`, so that $\boldsymbol{R\xi}$ represents the left-hand side of the null equation, and a null identity matrix `r` representing its right-hand side. From the model, we know that $\boldsymbol{\xi}=(\beta_0(0.2), \beta_1(0.2),\dots,\beta_2(0.8),\beta_3(0.8))'$, 8 elements long (4 coefficients times 2 quantile criteria), so $\boldsymbol{R}$ becomes:
+
+```{r}
+R <- rbind(c(0, 2, 0, 0,
+             0, -1, 0, 0))
+r <- matrix(c(0))
+```
+
+The `glhtxi` function requires further that we separately specify the $\tau$-quantiles of interest in a simple vector, and a separate `formula` object of the model. We can extract the latter from the previously ran instance of `rq`.
+
+```{r}
+taus <- c(0.2, 0.8)
+form <- formula(rqmod)
+```
+
+We may now run `glhtxi`, which will efficiently assemble the respective asymptotic covariance estimate and return a list of values. We leave the argument `se` unspecified, so it defaults to `"nid"` (i.e., errors assumed non-identically, independently distributed).
+
+```{r}
+glhtxi(taus = taus, form = form, data = mtcars,
+       R = R, r = r, se = "nid")
+```
+
+In the output, we are given a copy of the restriction matrix `$R`, the realized identity under the null `$H0` (i.e., $\boldsymbol{R}\hat{\boldsymbol{\xi}}-\boldsymbol{r}$), the observed test statistic `Tn`, the degrees of freedom `q`, and the p-value `p.value`. Here, $p=0.119$, so we fail to reject the null hypothesis.
