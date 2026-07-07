@@ -11,7 +11,6 @@ function(taus, form, data, R, r, se = "nid", ...){
   
   # Preliminaries
   modFull <- rq(formula=form, data=data, tau=taus)
-  summ <- summary(modFull, se = se, cov = T, ...)
   p <- ncol(model.frame(modFull))
   m <- length(taus)
   xi <- cbind(c(modFull$coefficients))
