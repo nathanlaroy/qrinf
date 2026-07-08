@@ -22,7 +22,7 @@ glhtprocess(taus, form, data, R, r, griddensity = 300, se = "nid", ...)
   \item{se}{A character string determining the type of standard errors used for the quantile regression model.
   Options are \code{"iid"}, \code{"nid"}, \code{"boot"}, \code{"ker"} and \code{"extreme"}. Defaults to \code{"nid"}. 
   See \link[quantreg]{summary.rq} for more information.}
-  \item{verbose}{Show warnings of negative density estimates. Defaults to `TRUE`.}
+  \item{verbose}{Show warnings of negative density estimates. Defaults to \code{TRUE}.}
   \item{\dots}{Optional arguments to rq.}
 }
 \details{
@@ -31,7 +31,7 @@ Dimensionality checks are performed on \code{R} and \code{r}, verifying that \eq
 Critical values are determined based on \eqn{\lambda=\pi_1(1-\pi_0)/(\tau_0(1-\tau_1))} and retrieved from tabled values. If \eqn{\lambda}
 does not appear in the table, the appropriate critical value is approximated by linear interpolation.
 
-When `verbose = TRUE`, the native warnings from \link[quantreg]{summary.rq} are made compact by summing the total number of non-positive
+When \code{verbose = TRUE}, the native warnings from \link[quantreg]{summary.rq} are made compact by summing the total number of non-positive
 density estimates, instead of letting the numerous warnings amass from iterated calls to \link[quantreg]{summary.rq}. If no non-positive
 densities occurred, verbose = TRUE is ignored.
 }
@@ -53,8 +53,8 @@ densities occurred, verbose = TRUE is ignored.
   The critical values associated with a 1\%, 5\%, and 10\% significance level.
   }
   \item{interpolated}{
-  Boolean, was the critical value interpolated? FALSE if `lambda` appeared among the tabled values. 
-  `NA` if rank of `R` exceeds 20.
+  Boolean, was the critical value interpolated? FALSE if \code{lambda} appeared among the tabled values. 
+  \code{NA} if rank of \code{R} exceeds 20.
   }
 }
 \references{
