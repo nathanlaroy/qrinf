@@ -31,9 +31,9 @@ Dimensionality checks are performed on \code{R} and \code{r}, verifying that \eq
 Critical values are determined based on \eqn{\lambda=\pi_1(1-\pi_0)/(\tau_0(1-\tau_1))} and retrieved from tabled values. If \eqn{\lambda}
 does not appear in the table, the appropriate critical value is approximated by linear interpolation.
 
-When \code{verbose = TRUE}, the native warnings from \link[quantreg]{summary.rq} are made compact by summing the total number of non-positive
+When \code{verbose=TRUE}, the native warnings from \link[quantreg]{summary.rq} are made compact by summing the total number of non-positive
 density estimates, instead of letting the numerous warnings amass from iterated calls to \link[quantreg]{summary.rq}. If no non-positive
-densities occurred, verbose = TRUE is ignored.
+densities occurred, \code{verbose=TRUE} is ignored.
 }
 \value{
   A list containing the following elements.
