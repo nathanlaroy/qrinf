@@ -13,11 +13,11 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", verbose = TRUE, 
   n <- nrow(data)
   summ <- .summ(modFull = modFull, se = se, ...)
   summaries <- summ$result
+  
+  fis <- 0
   if (verbose){
     fis <- do.call(sum, lapply(summ$warnings, FUN = function(x) as.numeric(regmatches(x, gregexpr("[0-9]+", x))[[1]])))
     warningMessage <- paste0(fis, " non-positive fis across all taus.")
-  } else {
-    warningMessage <- ""
   }
   
 
@@ -84,8 +84,9 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", verbose = TRUE, 
   
   results <- list(restriction.matrix = R, lambda = lambda, q = dimR[1], Tn = max(stat),
                    critical.value = crit, interpolated = interpolated)
-  if (verbose) {
+  if (verbose & fis != 0) {
     warning(warningMessage)
   }
+  
   return(results)
 }
