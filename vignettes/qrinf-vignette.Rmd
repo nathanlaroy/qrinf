@@ -172,4 +172,48 @@ suppressWarnings(processtest <- glhtprocess(taus = taus, form = form, data = mtc
 processtest
 ```
 
-We find that the obtained statistic is `r round(processtest$Tn,2)`, which is smaller than the critical value associated with the 10% significance level. So, we fail to reject the null hypothesis at said significance level. Note that a series of warning messages was omitted from this vignette for the purpose of readability. Users should be aware that `glhtprocess` is prone to returning many warnings due to the consecutive estimation of multiple asymptotic covariance blocks. They can be suppressed by wrapping the call inside `suppressWarnings()`, but this is generally not advised. A great number of warnings can point to model specification issues, and so should be investigated rather than ignored.
+We find that the obtained statistic is `r round(processtest$Tn,2)`, which is smaller than the critical value associated with the 10% significance level. So, we fail to reject the null hypothesis at said significance level. From the output, we find that `$interpolated` is `FALSE`, meaning that the obtained value for `$lambda` appears in the tables by Estrella (2003) and so the critical values are exact. When `$interpolated` returns `TRUE`, it means that `$lambda` does not appear in the tables by Estrella (2003). Consequently, the critical values for the different significance levels are linearly interpolated, yielding approximate values.
+
+Note that a series of warning messages was omitted from this vignette for the purpose of readability. Users should be aware that `glhtprocess` is prone to returning many warnings due to the consecutive estimation of multiple asymptotic covariance blocks under the hood using `quantreg::summary.rq`. They can be suppressed by wrapping the call inside `suppressWarnings()`, but this is generally not advised. A great number of warnings can point to model specification issues, and so should be investigated rather than ignored.
+
+### example 2.2
+
+As with `glhtxi`, the function `glhtprocess` allows to test combined null hypotheses. We illustrate this for the verbal hypothesis that the effects of `disp` and `cyl` are both different from zero for the interval $\tau\in[0.05, 0.5]$, controlled for `cyl`. Symbolically, this may be written as follows:
+
+$$
+H_0:
+\begin{cases}
+\beta_1(\tau) = 0\\
+\beta_2(\tau) = 0
+\end{cases}
+$$
+
+We define $\boldsymbol{R}$ and $\boldsymbol{r}(\tau)$, and set `taus` to the desired interval, in the code chunk below, and run `ghltprocess`.
+
+```{r, eval=FALSE}
+R <- rbind(c(0, 0, 1, 0),
+           c(0, 0, 0, 1))
+r <- matrix(c(0, 0))
+taus <- c(0.05, 0.5)
+
+glhtprocess(taus = taus, form = form, data = mtcars, R = R, r = r)
+```
+```{r, echo=FALSE}
+R <- rbind(c(0, 0, 1, 0),
+           c(0, 0, 0, 1))
+r <- matrix(c(0, 0))
+taus <- c(0.05, 0.5)
+
+suppressWarnings(processtest <- glhtprocess(taus = taus, form = form, data = mtcars, R = R, r = r))
+processtest
+```
+
+We find that we can convincingly reject the null hypothesis. The obtained test statistic is `r round(processtest$Tn, 2)`, which is far greater than the critical value associated with the 1% significance level. Based on the output, we find that `$lambda` is `r processtest$lambda`, which does not appear in the Estrella tables. Hence, the critical values were calculated by means of linear interpolation (`$interpolated` is `TRUE`). However, because the obtained test statistic is nowhere near the interpolated values, we can rest assured that the rejection of the null hypothesis is legitimate.
+
+Note that, again, we suppressed warnings for the purpose of the readability of this vignette and so the focus could be on the output itself. In making use of `glhtprocess`, one should not blatantly ignore such warnings.
+
+# References
+
+Estrella, A. (2003). Critical values and p values of bessel process distributions: Computation and
+application to structural break tests. *Econometric Theory, 19*(6), 1128–1143.
+https://doi.org/10.1017/S0266466603196107
