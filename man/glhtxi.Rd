@@ -17,7 +17,7 @@ glhtxi(taus, form, data, R, r, se = "nid", ...)
   \item{R}{A \eqn{q\times m(p+1)} restriction matrix to pre-multiply the coefficient vector, \eqn{\xi}.}
   \item{r}{A \eqn{q\times 1} null identity vector (i.e., column vector).}
   \item{se}{A character string determining the type of standard errors used for the quantile regression model.
-  Options are \code{"iid"}, \code{"nid"}, \code{"boot"}, \code{"ker"} and \code{"extreme"}. Defaults to \code{"nid"}.
+  Options are \code{"iid"}, \code{"nid"}, \code{"ker"} and \code{"extreme"}. Defaults to \code{"nid"}.
   See \link[quantreg]{summary.rq} for more information.}
   \item{\dots}{Optional arguments to rq.}
 }
@@ -27,6 +27,9 @@ glhtxi(taus, form, data, R, r, se = "nid", ...)
 form: \deqn{\xi = \left(\beta(\tau_i)',\dots,\beta(\tau_m)'\right)',} with \deqn{\beta(\tau_j) = \left(\beta_0(\tau_j),\dots,\beta_p(\tau_j)\right).}
 
 Dimensionality checks are performed on \code{R} and \code{r}, verifying that \eqn{R\xi-r} is a legal matrix operation. Returns error if not.
+
+For \code{se}, the option \code{"boot"} is not an option, because it disallows partitioning the asymptotic covariance estimate into
+the inverse Hessian and the unscaled outer product of the gradient matrix (see \link[quantreg]{summary.rq}).
 }
 \value{
   A list containing the following items.
