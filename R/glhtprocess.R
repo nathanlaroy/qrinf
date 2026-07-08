@@ -82,9 +82,10 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", verbose = TRUE, 
     crit <- do.call(rbind, crit)
   }
   
-  (results <- list(restriction.matrix = R, lambda = lambda, q = dimR[1], Tn = max(stat),
-                   critical.value = crit, interpolated = interpolated))
+  results <- list(restriction.matrix = R, lambda = lambda, q = dimR[1], Tn = max(stat),
+                   critical.value = crit, interpolated = interpolated)
   if (verbose) {
     warning(warningMessage)
   }
+  return(results)
 }
