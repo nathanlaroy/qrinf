@@ -25,7 +25,7 @@ glhtprocess(taus, form, data, R, r, griddensity = 300, se = "nid", ...)
   \item{\dots}{Optional arguments to rq.}
 }
 \details{
-Dimensionality checks are performed on \code{R} and \code{r}, verifying that \eqn{R\beta(\tau)-r(\tau)} is a legal matrix operation.\n
+Dimensionality checks are performed on \code{R} and \code{r}, verifying that \eqn{R\beta(\tau)-r(\tau)} is a legal matrix operation.
 
 Critical values are determined based on \eqn{\lambda=\pi_1(1-\pi_0)/(\tau_0(1-\tau_1))} and retrieved from tabled values. If \eqn{\lambda}
 does not appear in the table, the appropriate critical value is approximated by linear interpolation.
