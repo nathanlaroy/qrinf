@@ -22,6 +22,7 @@ glhtprocess(taus, form, data, R, r, griddensity = 300, se = "nid", ...)
   \item{se}{A character string determining the type of standard errors used for the quantile regression model.
   Options are \code{"iid"}, \code{"nid"}, \code{"boot"}, \code{"ker"} and \code{"extreme"}. Defaults to \code{"nid"}. 
   See \link[quantreg]{summary.rq} for more information.}
+  \item{verbose}{Show warnings of negative density estimates. Defaults to `TRUE`.}
   \item{\dots}{Optional arguments to rq.}
 }
 \details{
