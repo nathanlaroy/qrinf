@@ -11,18 +11,16 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", verbose = TRUE, 
   modFull <- rq(formula=form, data=data, tau=taus)
   p <- ncol(model.frame(modFull))
   n <- nrow(data)
-  warningMessage <- tryCatch(summaries <- summary(modFull, se = "nid", cov = T, ...),
-                warning = function(e){
-                  if(grepl("non-positive fis", e$message)){
-                    number <- as.numeric(regmatches(e$message, gregexpr("[0-9]+", e$message))[[1]])
-                    warningtext <- paste0(number, " non-positive densities were estimated across all provided quantile criteria.")
-                    return(warningtext)
-                  }
-                })
+  summ <- .summ(modFull = modFull, se = se, ...)
+  summaries <- summ$result
   if (verbose){
-    warning(warningMessage)
+    fis <- do.call(sum, lapply(summ$warnings, FUN = function(x) as.numeric(regmatches(x, gregexpr("[0-9]+", x))[[1]])))
+    warningMessage <- paste0(fis, " non-positive fis across all taus.")
+  } else {
+    warningMessage <- ""
   }
   
+
   # Checks
   dimR <- dim(R)
   dimr <- dim(r)
@@ -84,7 +82,9 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", verbose = TRUE, 
     crit <- do.call(rbind, crit)
   }
   
-  
   (results <- list(restriction.matrix = R, lambda = lambda, q = dimR[1], Tn = max(stat),
                    critical.value = crit, interpolated = interpolated))
+  if (verbose) {
+    warning(warningMessage)
+  }
 }
