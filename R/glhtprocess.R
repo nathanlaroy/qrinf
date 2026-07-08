@@ -1,5 +1,5 @@
 glhtprocess <-
-function(taus, form, data, R, r, griddensity = 300, se = "nid", ...){
+function(taus, form, data, R, r, griddensity = 300, se = "nid", verbose = TRUE, ...){
   # Preliminary checks
   if (!all(taus<1 & taus>0)){
     message <- paste0("Quantile interval is not a proper subset of (0, 1).")
@@ -11,7 +11,17 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", ...){
   modFull <- rq(formula=form, data=data, tau=taus)
   p <- ncol(model.frame(modFull))
   n <- nrow(data)
-  summaries <- summary(modFull, se = se, cov = T, ...)
+  warningMessage <- tryCatch(summaries <- summary(modFull, se = "nid", cov = T, ...),
+                warning = function(e){
+                  if(grepl("non-positive fis", e$message)){
+                    number <- as.numeric(regmatches(e$message, gregexpr("[0-9]+", e$message))[[1]])
+                    warningtext <- paste0(number, " non-positive densities were estimated across all provided quantile criteria.")
+                    return(warningtext)
+                  }
+                })
+  if (verbose){
+    warning(warningMessage)
+  }
   
   # Checks
   dimR <- dim(R)
@@ -78,3 +88,7 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", ...){
   (results <- list(restriction.matrix = R, lambda = lambda, q = dimR[1], Tn = max(stat),
                    critical.value = crit, interpolated = interpolated))
 }
+
+
+modFull <- rq(formula=formula(rqmod), data=mtcars, tau=seq(0.05, 0.95, length.out=300))
+
