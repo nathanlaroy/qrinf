@@ -88,7 +88,3 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", verbose = TRUE, 
   (results <- list(restriction.matrix = R, lambda = lambda, q = dimR[1], Tn = max(stat),
                    critical.value = crit, interpolated = interpolated))
 }
-
-
-modFull <- rq(formula=formula(rqmod), data=mtcars, tau=seq(0.05, 0.95, length.out=300))
-
