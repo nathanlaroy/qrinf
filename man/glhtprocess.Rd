@@ -63,3 +63,11 @@ Koenker, R. (2005). Quantile regression. Cambridge University Press.
 \author{
 Nathan Laroy (\email{laroynathan@gmail.com})
 }
+\examples{
+taus <- c(0.05, 0.45)
+griddensity <- 300
+form <- formula(mpg ~ cyl + disp + hp)
+R <- rbind(c(0, 1, 1, 0))
+r <- cbind(rep(0,1))
+glhtprocess(taus = taus, form = form, data = mtcars, R = R, r = r)
+}

@@ -55,3 +55,12 @@ Koenker, R. (2005). Quantile regression. Cambridge University Press.
 \author{
 Nathan Laroy (\email{laroynathan@gmail.com})
 }
+\examples{
+taus <- c(0.25, 0.5, 0.75)
+form <- formula(mpg ~ cyl + disp + hp)
+R <- rbind(c(0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+           c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+           c(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0))
+r <- matrix(c(0, 0, 0))
+glhtxi(taus = taus, form = form, data = mtcars, R = R, r = r, se = "nid")
+}
