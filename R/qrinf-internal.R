@@ -19,3 +19,22 @@ function(x, form, data){
     (min(tau1, tau2) - tau1*tau2) * summ[[which(taus==tau1)]]$Hinv %*% summ[[1]]$J %*% summ[[which(taus==tau2)]]$Hinv
   }
 }
+.summ <- function(modFull, se = se, ...) {
+  context = new.env()
+  context$result = withCallingHandlers(
+    withRestarts(
+      summaries <- summary(modFull, se = se, cov = T, ...),
+      muffleStop = function() NULL
+    ),
+    warning = function(w) {
+      context$warnings = c(context$warnings,
+                           list(as.character(conditionMessage(w))))
+      invokeRestart("muffleWarning")
+    },
+    error = function(e) {
+      context$error = as.character(conditionMessage(e))
+      invokeRestart("muffleStop")
+    }
+  )
+  as.list(context)
+}
