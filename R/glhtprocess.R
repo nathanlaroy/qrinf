@@ -58,7 +58,7 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", ...){
     lambdasIndex <- which.max(ifelse(lambdas < lambda, lambdas, -Inf))
     if (lambda > tail(lambdas, n=1)){
       lambda <- 361
-      warning("Lambda > 361, critical value determined for lambda = 361.")
+      warning("Lambda > 361, critical values determined for lambda = 361. Critical values will be too small, type I error rate is inflated.")
     }
     if (!round(lambda, 2) %in% lambdas){
       interpolated <- TRUE
