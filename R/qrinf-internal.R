@@ -38,7 +38,7 @@ function(x, form, data){
   )
   as.list(context)
 }
-.statFun <- function(x){
+.statFun <- function(x, r){
   B <- x$coefficients[,1]
   V <- x$cov
   return(t(R %*% B - r) %*% solve(R %*% V %*% t(R)) %*% (R %*% B - r))
