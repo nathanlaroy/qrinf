@@ -27,25 +27,30 @@ glhtprocess(taus, form, data, R, r, griddensity = 300, se = "nid", ...)
   \item{\dots}{Optional arguments to rq.}
 }
 \details{
-Dimensionality checks are performed on \code{R} and \code{r}, verifying that \eqn{R\beta(\tau)-r(\tau)} is a legal matrix operation.
+Critical values are determined based on \eqn{\lambda=\pi_1(1-\pi_0)/(\tau_0(1-\tau_1))} and retrieved from tabled values from Estrella (2003). 
+If \eqn{\lambda} does not appear in the table, the appropriate critical value is approximated by linear interpolation if \eqn{q<20}.
+In the unlikely scenario that \eqn{q>20} or \eqn{\lambda\notin(1,361)}, warnings are produced to alert the user. In the latter case,
+\eqn{\lambda} is internally set to the closest tabled integer.
 
-Critical values are determined based on \eqn{\lambda=\pi_1(1-\pi_0)/(\tau_0(1-\tau_1))} and retrieved from tabled values. If \eqn{\lambda}
-does not appear in the table, the appropriate critical value is approximated by linear interpolation.
+When \code{verbose=TRUE}, the native non-positive density estimate warnings from \link[quantreg]{summary.rq} are made compact by 
+summing the total number instances, instead of letting the numerous warnings amass from iterated calls to \link[quantreg]{summary.rq}. 
+If no non-positive density estimates occurred, \code{verbose=TRUE} is ignored.
 
-When \code{verbose=TRUE}, the native warnings from \link[quantreg]{summary.rq} are made compact by summing the total number of non-positive
-density estimates, instead of letting the numerous warnings amass from iterated calls to \link[quantreg]{summary.rq}. If no non-positive
-densities occurred, \code{verbose=TRUE} is ignored.
+\code{r} is a null identity function of \eqn{\tau}, i.e., \eqn{H_0: \boldsymbol{R\beta}(\tau)=\boldsymbol{r}(\tau)}. The argument that
+is passed can either be a vector of constants (e.g., \code{r = cbind(c(0, 0))}), or a function that minimally takes \eqn{\tau} as argument.
+If \code{r} is a function, its first argument \emph{must} be \eqn{\tau}, even when the function of interest does not involve the parameter
+\eqn{\tau}, for \code{glhtprocess} properly to work. Additional arguments should be passed as a \link[base]{list} to \code{r.args}. \code{tau}
+should not be explicitly passed to \code{r.args}, it is internally assigned based on \code{taus} and \code{griddensity}. For example,
+if one wishes to let \eqn{\boldsymbol{r}(\tau, k)=\Phi^{-1}(\tau)/k}, \eqn{\Phi^{-1}} the quantile function of a standard-normal variate,
+then one should set \code{r=function(x,k)qnorm(x)/k}. If \code{k} is a constant (e.g., \eqn{k=2}), set \code{r.args=list(k=c)}. If any
+of the elements in \code{r.args} are a vector (i.e., length greater than 1), it is assumed that the argument is not a constant,
+but varies along with \eqn{\tau}. These arguments should be vectors of length equal to \code{griddensity} (if not, the provided vector
+is recycled to the appropriate length). For example, suppose we want \eqn{\boldsymbol{r}(\tau, k)=\Phi^{-1}(\tau)/k + b/h}, then we set
+\code{r=function(tau, k, b, h)qnorm(tau)/k + b/h} and, e.g., \code{r.args=list(k=1:2, b=-1, h=1:15)}. In this case, \code{k} and \code{h}
+are recycled to length equal to \code{griddensity}, while \code{b} is treated as a constant.
 
-\code{r} can be either a \eqn{q\times 1} null identity vector (e.g., \code{r = cbind(c(0, 0))}), or a function representing \eqn{\boldsymbol{r}(\tau)}. 
-If \code{r} is a function, its first argument must be the quantile criterion \eqn{\tau} (note that the function need not 
-necessarily involve \eqn{\tau}, this is only necessary for the internals of \code{glhtprocess} to work). \code{tau} cannot appear as argument
-in \code{r.args}, but is assigned internally based on \code{taus} and \code{griddensity}. Additional arguments should be passed
-as a list to \code{r.args}. For example, if one wishes to let \eqn{\boldsymbol{r}(\tau, k)=\Phi^{-1}{\tau}/k}, \eqn{\Phi^{-1}} the quantile function 
-of a standard-normal variate, then let \code{r=function(x,k)qnorm(x)/k} and, for \code{k} a constant \code{c}, \code{r.args=list(k=c)}. 
-If any of the elements in \code{r.args} are a vector with length greater than 1, it is assumed that the argument is not a constant, but varies 
-along with \eqn{\tau}. The argument should then be a vector with length equal to \code{griddensity} (if not, the provided vector 
-is recycled to the appropriate length). For example, letting \code{r=function(tau, k, b, h)qnorm(tau)/k + b/h} and \code{r.args=list(k=1:2, b=-1, h=1:15)},
-\code{k} and \code{h} are recycled to length equal to \code{griddensity}, while \code{b} is treated as a constant.
+If \code{r} is a vector, dimensionality checks are performed on \code{R} and \code{r} in order to verify that 
+\eqn{R\beta(\tau)-r(\tau)} is a legal matrix operation.
 }
 \value{
   A list containing the following elements.
