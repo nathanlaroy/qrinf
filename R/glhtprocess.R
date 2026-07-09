@@ -51,7 +51,7 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", verbose = TRUE, 
   }
   stat <- mapply(FUN = statFun, summaries)
   
-  
+  # Lambda
   tau0 <- min(taus)
   tau1 <- max(taus)
   lambda <- tau1*(1-tau0) / (tau0*(1-tau1))
