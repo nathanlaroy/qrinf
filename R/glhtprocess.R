@@ -44,12 +44,7 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", verbose = TRUE, 
   }
   
   # Test
-  statFun <- function(x){
-    B <- x$coefficients[,1]
-    V <- x$cov
-    return(t(R %*% B - r) %*% solve(R %*% V %*% t(R)) %*% (R %*% B - r))
-  }
-  stat <- mapply(FUN = statFun, summaries)
+  stat <- mapply(FUN = .statFun, summaries)
   
   # Lambda
   tau0 <- min(taus)
