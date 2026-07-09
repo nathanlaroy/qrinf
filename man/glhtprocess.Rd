@@ -16,12 +16,13 @@ glhtprocess(taus, form, data, R, r, griddensity = 300, se = "nid", ...)
   \item{form}{An object of class \link[stats]{formula}.}
   \item{data}{An object of class \link[base]{data.frame}.}
   \item{R}{A \eqn{q\times m(p+1)} restriction matrix to pre-multiply the coefficient vector.}
-  \item{r}{A \eqn{q\times 1} null identity vector, such that \eqn{H_0: R\beta(\tau)=r(\tau)}.}
+  \item{r}{A \eqn{q\times 1} null identity vector, such that \eqn{H_0: R\beta(\tau)=r(\tau)}. Or, a function (see Details).}
   \item{griddensity}{An integer representing the number of equidistant quantile criteria to consider
   in the interval defined by `taus`. Default is `300`.}
   \item{se}{A character string determining the type of standard errors used for the quantile regression model.
   Options are \code{"iid"}, \code{"nid"}, \code{"boot"}, \code{"ker"} and \code{"extreme"}. Defaults to \code{"nid"}. 
   See \link[quantreg]{summary.rq} for more information.}
+  \item{r.args}{If \code{r} is a function, additional arguments besides tau (see Details). Must be named.}
   \item{verbose}{Show warnings of negative density estimates. Defaults to \code{TRUE}.}
   \item{\dots}{Optional arguments to rq.}
 }
@@ -34,6 +35,17 @@ does not appear in the table, the appropriate critical value is approximated by 
 When \code{verbose=TRUE}, the native warnings from \link[quantreg]{summary.rq} are made compact by summing the total number of non-positive
 density estimates, instead of letting the numerous warnings amass from iterated calls to \link[quantreg]{summary.rq}. If no non-positive
 densities occurred, \code{verbose=TRUE} is ignored.
+
+\code{r} can be either a \eqn{q\times 1} null identity vector (e.g., \code{r = cbind(c(0, 0))}), or a function representing \eqn{\boldsymbol{r}(\tau)}. 
+If \code{r} is a function, its first argument must be the quantile criterion \eqn{\tau} (note that the function need not 
+necessarily involve \eqn{\tau}, this is only necessary for the internals of \code{glhtprocess} to work). \code{tau} cannot appear as argument
+in \code{r.args}, but is assigned internally based on \code{taus} and \code{griddensity}. Additional arguments should be passed
+as a list to \code{r.args}. For example, if one wishes to let \eqn{\boldsymbol{r}(\tau, k)=\Phi^{-1}{\tau}/k}, \eqn{\Phi^{-1}} the quantile function 
+of a standard-normal variate, then let \code{r=function(x,k)qnorm(x)/k} and, for \code{k} a constant \code{c}, \code{r.args=list(k=c)}. 
+If any of the elements in \code{r.args} are a vector with length greater than 1, it is assumed that the argument is not a constant, but varies 
+along with \eqn{\tau}. The argument should then be a vector with length equal to \code{griddensity} (if not, the provided vector 
+is recycled to the appropriate length). For example, letting \code{r=function(tau, k, b, h)qnorm(tau)/k + b/h} and \code{r.args=list(k=1:2, b=-1, h=1:15)},
+\code{k} and \code{h} are recycled to length equal to \code{griddensity}, while \code{b} is treated as a constant.
 }
 \value{
   A list containing the following elements.
