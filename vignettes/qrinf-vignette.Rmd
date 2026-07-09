@@ -150,7 +150,7 @@ We find very strong evidence against this null hypothesis, and so choose to reje
 
 ## `ghltprocess`: general linear hypothesis tests on $\boldsymbol{\beta}(\tau)$
 
-In this section, use of `glhtprocess` is illustrated.
+In this section, use of `glhtprocess` is illustrated, with special case when $\boldsymbol{r}(\tau)$ is a non-constant function.
 
 ### example 2.1
 
@@ -161,7 +161,7 @@ R <- rbind(c(0, 0, 0, 1))
 r <- matrix(c(0))
 taus <- c(0.05, 0.95)
 
-glhtprocess(taus = taus, form = form, data = mtcars, R = R, r = r, verbose = FALSE)
+(processtest <- glhtprocess(taus = taus, form = form, data = mtcars, R = R, r = r, verbose = FALSE))
 ```
 
 We find that the obtained statistic is `r round(processtest$Tn,2)`, which is smaller than the critical value associated with the 10% significance level. So, we fail to reject the null hypothesis at said significance level. From the output, we find that `$interpolated` is `FALSE`, meaning that the obtained value for `$lambda` appears in the tables by Estrella (2003) and so the critical values are exact. When `$interpolated` returns `TRUE`, it means that `$lambda` does not appear in the tables by Estrella (2003). Consequently, the critical values for the different significance levels are linearly interpolated, yielding approximate values.
@@ -188,12 +188,36 @@ R <- rbind(c(0, 0, 1, 0),
 r <- matrix(c(0, 0))
 taus <- c(0.05, 0.5)
 
-glhtprocess(taus = taus, form = form, data = mtcars, R = R, r = r, verbose = FALSE)
+(processtest <- glhtprocess(taus = taus, form = form, data = mtcars, R = R, r = r, verbose = FALSE))
 ```
 
 We find that we can convincingly reject the null hypothesis. The obtained test statistic is `r round(processtest$Tn, 2)`, which is far greater than the critical value associated with the 1% significance level. Based on the output, we find that `$lambda` is `r processtest$lambda`, which does not appear in the Estrella tables. Hence, the critical values were calculated by means of linear interpolation (`$interpolated` is `TRUE`). However, because the obtained test statistic is nowhere near the interpolated values, we can rest assured that the rejection of the null hypothesis is legitimate.
 
 Note that, again, we suppressed warnings for the purpose of the readability of this vignette and so the focus could be on the output itself. In making use of `glhtprocess`, one should not blatantly ignore such warnings.
+
+### example 3
+
+Next, let's consider a case where $q=1$ and $\boldsymbol{r}$ is a non-constant function in the interval of $\tau$ considered. For the sake of example, suppose $\boldsymbol{r}(\tau,k)=\Phi^{-1}(\tau)/k$. The function `glhtprocess` conveniently allows to pass a function to `r` with additional arguments to `r.args` (i.e., `tau` is not explicitly passed, only additional parameters if they exist). We set $R=(0, 1, 1, 0)$, which tests under the null whether $\beta_1(\tau)=\beta_2(\tau)$. We set up as follows:
+
+```{r}
+R <- rbind(c(0, 2, 0, 0))
+f <- function(x,k) qnorm(x)/k
+glhtprocess(taus = c(0.05, 0.45), form = form, data = mtcars, R = R,
+            r = f, r.args = list(k = 2), verbose = FALSE)
+```
+
+We set `k=2`, so it is treated as a constant. We could also simply have set `f <- function(x) qnorm(x)/2`, leaving `r.args` unspecified. We find no strong evidence against the null hypothesis that $\boldsymbol{R\beta}(\tau)=\boldsymbol{r}(\tau)$.
+
+Suppose $k$ is not constant, but takes different values depending on $\tau$. In that case, we can pass a vector of appropriate values
+to `r.args`. This vector has to have length equal to `griddensity` (default `300`). The values of $\tau$ considered by the function are a vector of length equal to `griddensity` of equidistant values in the interval passed to `taus`. If an element of `r.args` does not have the required length, it is recycled until it does. Moreover, the number of additional arguments can be arbitrarily large. For example, consider $\boldsymbol{r}(\tau,k,b,h)=\Phi^{-1}(\tau)/k + b/h$, then we can set up as follows:
+
+```{r}
+f <- function(x,k,b,h) qnorm(x)/k + b/h
+glhtprocess(taus = c(0.05, 0.45), form = form, data = mtcars, R = R,
+            r = f, r.args = list(k = 2:10, b = 0.4, h=2:15), verbose = FALSE)
+```
+
+In this case, the arguments `b` is treated as constants, while `k` and `h` are taken to vary with $\tau$ and is recycled until its length is equal to `griddensity` (here, default value `300`). In this case, we do find evidence against the null hypothesis, we can reject it at the 1% significance level.
 
 # References
 
