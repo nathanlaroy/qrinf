@@ -61,7 +61,7 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", r.args = NULL, v
     }
     if (length(r) < length(taus)) stop("Function r() yields vector of insufficient length.")
   }
-  stat <- mapply(FUN = .statFun, summaries, r = r)
+  stat <- mapply(FUN = .statFun, summaries, R = R, r = r)
   
   # Lambda
   tau0 <- min(taus)
