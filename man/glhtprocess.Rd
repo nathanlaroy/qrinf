@@ -42,10 +42,10 @@ If \code{r} is a function, its first argument \emph{must} be \eqn{\tau}, even wh
 \eqn{\tau}, for \code{glhtprocess} properly to work. Additional arguments should be passed as a \link[base]{list} to \code{r.args}. \code{tau}
 should not be explicitly passed to \code{r.args}, it is internally assigned based on \code{taus} and \code{griddensity}. For example,
 if one wishes to let \eqn{\boldsymbol{r}(\tau, k)=\Phi^{-1}(\tau)/k}, \eqn{\Phi^{-1}} the quantile function of a standard-normal variate,
-then one should set \code{r=function(x,k)qnorm(x)/k}. If \code{k} is a constant (e.g., \eqn{k=2}), set \code{r.args=list(k=c)}. If any
+then one should set \code{r=function(x,k)qnorm(x)/k}. If \code{k} is a constant (e.g., \eqn{k=2}), set \code{r.args=list(k=2)}. If any
 of the elements in \code{r.args} are a vector (i.e., length greater than 1), it is assumed that the argument is not a constant,
 but varies along with \eqn{\tau}. These arguments should be vectors of length equal to \code{griddensity} (if not, the provided vector
-is recycled to the appropriate length). For example, suppose we want \eqn{\boldsymbol{r}(\tau, k)=\Phi^{-1}(\tau)/k + b/h}, then we set
+is recycled to the appropriate length). For example, suppose we want \eqn{\boldsymbol{r}(\tau, k, b, h)=\Phi^{-1}(\tau)/k + b/h}, then we set
 \code{r=function(tau, k, b, h)qnorm(tau)/k + b/h} and, e.g., \code{r.args=list(k=1:2, b=-1, h=1:15)}. In this case, \code{k} and \code{h}
 are recycled to length equal to \code{griddensity}, while \code{b} is treated as a constant.
 
@@ -75,7 +75,10 @@ If \code{r} is a vector, dimensionality checks are performed on \code{R} and \co
   }
 }
 \references{
-Koenker, R. (2005). Quantile regression. Cambridge University Press.
+Koenker, R. (2005). \emph{Quantile regression}. Cambridge University Press.
+
+Estrella, A. (2003). Critical values and p values of Bessel process distributions: Computation and application to structural break tests.
+\emph{Econometric Theory, 19}(6), 1128--1143. \doi{10.1017/S0266466603196107}
 }
 \author{
 Nathan Laroy (\email{laroynathan@gmail.com})
