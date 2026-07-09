@@ -46,22 +46,23 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", r.args = NULL, v
   }
   
   # Test statistic
-  if (!is.function(r)){
-    r <- rep(r, length.out = length(taus))
-  } else {
+  if (is.function(r)){
     if (length(formals(r))>1 & length(r.args)<1) stop("Missing arguments in r.args.")
     if (any(sapply(r.args, length) > 1)){
       toVectorize <- which(sapply(r.args, length) > 1)
       r.vec.args <- lapply(r.args[toVectorize], FUN = function(x) rep(x, length.out=griddensity))
-      r.args <- r.args[-toVectorize]
+      r.rest.args <- r.args[-toVectorize]
       mapplyArgs <- list(FUN = r, taus)
-      r <- do.call(mapply, c(mapplyArgs, r.vec.args, MoreArgs = list(r.args)))
+      rRes <- do.call(mapply, c(mapplyArgs, r.vec.args, MoreArgs = list(r.rest.args)))
     } else {
-      r <- mapply(FUN = r, taus, MoreArgs = r.args)
+      rRes <- mapply(FUN = r, taus, MoreArgs = r.args)
     }
-    if (length(r) < length(taus)) stop("Function r() yields vector of insufficient length.")
+    if (length(rRes) < length(taus)) stop("Function r() yields vector of insufficient length.")
+    stat <- mapply(FUN = .statFun, x = summaries, r = rRes, MoreArgs = list(R = R))
+  } else {
+    stat <- mapply(FUN = .statFun, summaries, MoreArgs = list(R = R, r = r))
   }
-  stat <- mapply(FUN = .statFun, summaries, R = R, r = r)
+  
   
   # Lambda
   tau0 <- min(taus)
