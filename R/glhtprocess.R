@@ -13,14 +13,12 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", verbose = TRUE, 
   n <- nrow(data)
   summ <- .summ(modFull = modFull, se = se, ...)
   summaries <- summ$result
-  
   fis <- 0
   if (verbose){
     fis <- do.call(sum, lapply(summ$warnings, FUN = function(x) as.numeric(regmatches(x, gregexpr("[0-9]+", x))[[1]])))
     warningMessage <- paste0(fis, " non-positive fis across all taus.")
   }
   
-
   # Checks
   dimR <- dim(R)
   dimr <- dim(r)
@@ -46,13 +44,14 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", verbose = TRUE, 
   }
   
   # Test
-  stat <- numeric(length(taus))
-  for (i in 1:length(taus)){
-    tau <- taus[i]
-    B <- summaries[[i]]$coefficients[,1]
-    V <- summaries[[i]]$cov
-    stat[i] <- t(R %*% B - r) %*% solve(R %*% V %*% t(R)) %*% (R %*% B - r)
+  statFun <- function(x){
+    B <- x$coefficients[,1]
+    V <- x$cov
+    return(t(R %*% B - r) %*% solve(R %*% V %*% t(R)) %*% (R %*% B - r))
   }
+  stat <- mapply(FUN = statFun, summaries)
+  
+  
   tau0 <- min(taus)
   tau1 <- max(taus)
   lambda <- tau1*(1-tau0) / (tau0*(1-tau1))
@@ -84,6 +83,7 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", verbose = TRUE, 
   
   results <- list(restriction.matrix = R, lambda = lambda, q = dimR[1], Tn = max(stat),
                    critical.value = crit, interpolated = interpolated)
+  
   if (verbose & fis != 0) {
     warning(warningMessage)
   }
