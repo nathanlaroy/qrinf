@@ -76,8 +76,12 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", r.args = NULL, v
     lambdas <- estrellaTables$lambda[1:13]
     lambdasIndex <- which.max(ifelse(lambdas < lambda, lambdas, -Inf))
     if (lambda > tail(lambdas, n=1)){
-      lambda <- 361
+      lambda <- tail(lambdas, n=1)
       warning("Lambda > 361, critical values determined for lambda = 361. Critical values will be too small, type I error rate is inflated.")
+    }
+    if (lambda < head(lambdas, n=1)){
+      lambda <- head(lambdas, n=1)
+      warning("Lambda < 1, critical values determined for lambda = 361. Critical values will be too small, type I error rate is inflated.")
     }
     if (!round(lambda, 2) %in% lambdas){
       interpolated <- TRUE
