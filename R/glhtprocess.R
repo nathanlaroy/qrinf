@@ -1,5 +1,5 @@
 glhtprocess <-
-function(taus, form, data, R, r, griddensity = 300, se = "nid", verbose = TRUE, ...){
+function(taus, form, data, R, r, griddensity = 300, se = "nid", r.args = NULL, verbose = TRUE, ...){
   # Preliminary checks
   if (!all(taus<1 & taus>0)){
     message <- paste0("Quantile interval is not a proper subset of (0, 1).")
@@ -21,17 +21,19 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", verbose = TRUE, 
   
   # Checks
   dimR <- dim(R)
-  dimr <- dim(r)
   if (dimR[2] != p){
     dimR <- paste0("(", dimR[1], "x", dimR[2],")")
     dimBeta <- paste0("(", p, "x", 1,")")
     stop(paste0("R ", dimR, " and Beta ", dimBeta, " are non-conformable."))
   }
-  if (!identical(dim(R%*%modFull$coefficients[,1]), dim(r))){
-    dimRBeta <- dim(R%*%modFull$coefficients[,1])
-    dimRBeta <- paste0("(", dimRBeta[1], "x", dimRBeta[2],")")
-    dimr <- paste0("(", dimr[1], "x", dimr[2],")")
-    stop(paste0("R\u03B2 ", dimRBeta, " and r ", dimr, " have non-identical dimensions."))
+  if (!is.function(r)){
+    dimr <- dim(r)
+    if (!identical(dim(R%*%modFull$coefficients[,1]), dim(r))){
+      dimRBeta <- dim(R%*%modFull$coefficients[,1])
+      dimRBeta <- paste0("(", dimRBeta[1], "x", dimRBeta[2],")")
+      dimr <- paste0("(", dimr[1], "x", dimr[2],")")
+      stop(paste0("R\u03B2 ", dimRBeta, " and r ", dimr, " have non-identical dimensions."))
+    }
   }
   if (0 %in% rowSums(R)){
     stop("Restriction matrix R contains redundant row of zeroes.")
@@ -43,8 +45,23 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", verbose = TRUE, 
     q_outofbounds <- FALSE
   }
   
-  # Test
-  stat <- mapply(FUN = .statFun, summaries)
+  # Test statistic
+  if (!is.function(r)){
+    r <- rep(r, length.out = length(taus))
+  } else {
+    if (length(formals(r))>1 & length(r.args)<1) stop("Missing arguments in r.args.")
+    if (any(sapply(r.args, length) > 1)){
+      toVectorize <- which(sapply(r.args, length) > 1)
+      r.vec.args <- lapply(r.args[toVectorize], FUN = function(x) rep(x, length.out=griddensity))
+      r.args <- r.args[-toVectorize]
+      mapplyArgs <- list(FUN = r, taus)
+      r <- do.call(mapply, c(mapplyArgs, r.vec.args, MoreArgs = list(r.args)))
+    } else {
+      r <- mapply(FUN = r, taus, MoreArgs = r.args)
+    }
+    if (length(r) < length(taus)) stop("Function r() yields vector of insufficient length.")
+  }
+  stat <- mapply(FUN = .statFun, summaries, r = r)
   
   # Lambda
   tau0 <- min(taus)
