@@ -12,6 +12,9 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", r.args = NULL, v
   p <- ncol(model.frame(modFull))
   n <- nrow(data)
   summ <- .summ(modFull = modFull, se = se, ...)
+  if (!is.null(summ$error)){
+    stop(paste0("summary.rq returned error: ", summ$error))
+  }
   summaries <- summ$result
   fis <- 0
   if (verbose){
