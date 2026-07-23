@@ -85,7 +85,7 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", r.args = NULL, v
     }
     if (lambda < head(lambdas, n=1)){
       lambda <- head(lambdas, n=1)
-      warning("Lambda < 1, critical values determined for lambda = 361. Critical values will be too small, type I error rate is inflated.")
+      warning("Lambda < 1, critical values determined for lambda = 1. Critical values will be too large, type I error rate is deflated.")
     }
     if (!round(lambda, 2) %in% lambdas){
       interpolated <- TRUE
