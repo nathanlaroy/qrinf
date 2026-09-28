@@ -38,7 +38,8 @@ function(taus, form, data, R, r, griddensity = 300, se = "nid", r.args = NULL, v
       stop(paste0("R\u03B2 ", dimRBeta, " and r ", dimr, " have non-identical dimensions."))
     }
   }
-  if (0 %in% rowSums(R)){
+  redundantrows <- which(apply(R, MARGIN=1, FUN = function(x)all(x==0)))
+  if (any(redundantrows!=0)){
     stop("Restriction matrix R contains redundant row of zeroes.")
   }
   if (dimR[1]>20){
