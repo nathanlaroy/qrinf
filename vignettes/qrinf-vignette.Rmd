@@ -58,7 +58,7 @@ $$
 T = \sup \left(\boldsymbol{R}\hat{\boldsymbol\beta}(\tau)-\boldsymbol{r}(\tau)\right)'\left[\boldsymbol{R}\hat{\boldsymbol{V}}(\tau,\tau)\boldsymbol{R}'\right]^{-1}\left(\boldsymbol{R}\hat{\boldsymbol\beta}(\tau)-\boldsymbol{r}(\tau)\right),
 $$
 
-which behaves asymptotically like the $\sup$ of a tied-down Bessel process of order $q$, with $q$ the rank of $\boldsymbol{R}$. As before, `quantreg` includes some convenient implementations of specific instances of general linear hypotheses concerning the quantile regression process (namely, those which assess null hypotheses of location-shift and location-scale, via the `khmaladzeTest` function). However, researchers may be interested in testing a verbal hypothesis which cannot be rephrased as one which concerns location-shift or location-scale models, in which case the sup-Wald statistic would have to be manually calculated. The `qrinf` package allows applied researchers to conduct a hypothesis of the above sort, without having to write a bespoke script.
+which behaves asymptotically like the $\sup$ of the square of a tied-down Bessel process of order $q$, with $q$ the rank of $\boldsymbol{R}$. As before, `quantreg` includes some convenient implementations of specific instances of general linear hypotheses concerning the quantile regression process (namely, those which assess null hypotheses of location-shift and location-scale, via the `khmaladzeTest` function). However, researchers may be interested in testing a verbal hypothesis which cannot be rephrased as one which concerns location-shift or location-scale models, in which case the sup-Wald statistic would have to be manually calculated. The `qrinf` package allows applied researchers to conduct a hypothesis of the above sort, without having to write a bespoke script.
 
 The remainder of this vignette describes `glhtxi` and `glhtprocess`, the work horses of each hypothesis testing procedure, in more detail, providing code examples of their usage.
 
@@ -182,7 +182,7 @@ $$
 
 We define $\boldsymbol{R}$ and $\boldsymbol{r}(\tau)$, and set `taus` to the desired interval, in the code chunk below, and run `ghltprocess`.
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 R <- rbind(c(0, 0, 1, 0),
            c(0, 0, 0, 1))
 r <- matrix(c(0, 0))

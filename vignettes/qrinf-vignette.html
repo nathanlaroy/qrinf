@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Nathan Laroy" />
+
+<meta name="date" content="2026-09-24" />
+
+<title>General Linear Hypothesis Tests For Quantile Regression Models Using qrinf</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">General Linear Hypothesis Tests For
+Quantile Regression Models Using qrinf</h1>
+<h4 class="author">Nathan Laroy</h4>
+<h4 class="date">2026-09-24</h4>
+
+
+
+<div id="general-linear-hypotheses" class="section level2">
+<h2>General Linear Hypotheses</h2>
+<p>The quantile regression framework, like its linear regression
+counterpart, allows to test general linear hypotheses of various sorts
+using Wald-type statistics. Let a multiple quantile regression model
+take the following form:</p>
+<p><span class="math display">\[
+Q_Y(\tau\mid \boldsymbol{X}) = \boldsymbol{X\beta}(\tau),
+\]</span></p>
+<p>with <span class="math inline">\(\mathbf{X}\)</span> a covariate row
+vector of length <span class="math inline">\(p+1\)</span>, and <span class="math inline">\(\boldsymbol{\beta}(\tau)\)</span> a coefficient
+column vector of length <span class="math inline">\(p+1\)</span>, first
+element <span class="math inline">\(\beta_0(\tau)\)</span>.
+Consequently, define</p>
+<p><span class="math display">\[
+\boldsymbol{\xi} = \left(\boldsymbol{\beta}(\tau_1)&#39;, \dots,
+\boldsymbol{\beta}(\tau_m)&#39;\right)&#39;,
+\]</span></p>
+<p>and <span class="math inline">\(\boldsymbol{\beta}(\tau_j)=\left(\beta_0(\tau_j),
+\dots, \beta_p(\tau_j)\right)\)</span>. One may formulate two types of
+general linear hypotheses based on this model. The first concerns the
+extended coefficient vector <span class="math inline">\(\boldsymbol{\xi}\)</span> and takes the canonical
+form:</p>
+<p><span class="math display">\[
+H_0: \boldsymbol{R\xi}=\boldsymbol{r}.
+\]</span></p>
+<p>General linear hypotheses of this form allow to assess verbal
+hypotheses such as “the first and third quartile regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\(\mathbf{X}\)</span> yield identical coefficients”,
+or “the population value of <span class="math inline">\(\beta_2(\tau)\)</span> for the 90th percentile
+regression is exactly double that of the 10th percentile regression”,
+and any combination of these statements. They involve <em>point
+estimates</em> of quantile regression coefficients for a finite set of
+quantile criteria (i.e., they involve linear combinations of <span class="math inline">\(\beta_k(\tau=\tau_{0,l})\)</span>, for <span class="math inline">\(k\in\{0,\dots,p\}\)</span> and <span class="math inline">\(\tau_{0,l}\)</span> selected quantile criteria
+under the null hypothesis). The appropriate Wald-type statistic takes
+the following form:</p>
+<p><span class="math display">\[
+T =
+\left(\boldsymbol{R}\hat{\boldsymbol{\xi}}-\boldsymbol{r}\right)&#39;\left[\boldsymbol{R}\hat{\boldsymbol{V}}\boldsymbol{R}&#39;\right]^{-1}\left(\boldsymbol{R}\hat{\boldsymbol{\xi}}-\boldsymbol{r}\right),
+\]</span></p>
+<p>which converges asymptotically to a <span class="math inline">\(\chi^2_q\)</span> distribution with <span class="math inline">\(q\)</span> the rank of <span class="math inline">\(\boldsymbol{R}\)</span>. A practically challenging
+aspect of conducting a Wald-type inferential test for this type of null
+hypothesis pertains to the estimation of the asymptotic covariance of
+<span class="math inline">\(\boldsymbol{R}\hat{\boldsymbol\xi}-\boldsymbol{r}\)</span>,
+i.e., <span class="math inline">\(\boldsymbol{R}\hat{\boldsymbol{V}}\boldsymbol{R}&#39;\)</span>.
+Commonly tested null hypotheses, such as, e.g., <span class="math inline">\(H_0: \beta_k(\tau)=0\)</span> and <span class="math inline">\(H_0:
+\boldsymbol{\beta}(\tau)=\boldsymbol{0}\)</span>, have already been
+implemented in <code>quantreg</code> through existing convenience
+functions (e.g., <code>anova</code>). The <code>qrinf</code> package was
+specifically developed to simplify matters for applied researchers
+whenever they wish to assess a null hypothesis which does not enjoy a
+standard implementation in <code>quantreg</code>, and so for which the
+asymptotic covariance matrix would have to be manually estimated and the
+statistic manually obtained.</p>
+<p>A second type of general linear hypothesis takes the following
+form:</p>
+<p><span class="math display">\[
+H_0: \boldsymbol{R\beta}(\tau)=\boldsymbol{r}(\tau),
+\]</span></p>
+<p>with <span class="math inline">\(\boldsymbol{r}(\tau)\)</span> a
+vector-valued function of <span class="math inline">\(\tau\)</span>.
+Contrary to the previous case, general linear hypotheses pertain here to
+continuous closed intervals of quantiles (i.e., <span class="math inline">\(\tau\in[\tau_a,\tau_b]\subsetneq(0,1)\)</span>).
+They allow to assess verbal hypotheses which pertain to the quantile
+regression process, e.g., “<span class="math inline">\(\beta_3(\tau)\)</span> is constant in the interval
+<span class="math inline">\([0.5, 0.95]\)</span>”, or “<span class="math inline">\(\beta_1(\tau)\)</span> changes sign, but not
+magnitude, for <span class="math inline">\(\tau&gt;0.5\)</span> compared
+to <span class="math inline">\(\tau&lt;0.5\)</span>”. The appropriate
+sup-Wald statistic takes the following form:</p>
+<p><span class="math display">\[
+T = \sup
+\left(\boldsymbol{R}\hat{\boldsymbol\beta}(\tau)-\boldsymbol{r}(\tau)\right)&#39;\left[\boldsymbol{R}\hat{\boldsymbol{V}}(\tau,\tau)\boldsymbol{R}&#39;\right]^{-1}\left(\boldsymbol{R}\hat{\boldsymbol\beta}(\tau)-\boldsymbol{r}(\tau)\right),
+\]</span></p>
+<p>which behaves asymptotically like the <span class="math inline">\(\sup\)</span> of the square of a tied-down Bessel
+process of order <span class="math inline">\(q\)</span>, with <span class="math inline">\(q\)</span> the rank of <span class="math inline">\(\boldsymbol{R}\)</span>. As before,
+<code>quantreg</code> includes some convenient implementations of
+specific instances of general linear hypotheses concerning the quantile
+regression process (namely, those which assess null hypotheses of
+location-shift and location-scale, via the <code>khmaladzeTest</code>
+function). However, researchers may be interested in testing a verbal
+hypothesis which cannot be rephrased as one which concerns
+location-shift or location-scale models, in which case the sup-Wald
+statistic would have to be manually calculated. The <code>qrinf</code>
+package allows applied researchers to conduct a hypothesis of the above
+sort, without having to write a bespoke script.</p>
+<p>The remainder of this vignette describes <code>glhtxi</code> and
+<code>glhtprocess</code>, the work horses of each hypothesis testing
+procedure, in more detail, providing code examples of their usage.</p>
+</div>
+<div id="glhtxi-general-linear-hypothesis-tests-on-xi." class="section level2">
+<h2><code>glhtxi</code>: general linear hypothesis tests on <span class="math inline">\(\xi\)</span>.</h2>
+<div id="example-1.1" class="section level3">
+<h3>example 1.1</h3>
+<p>In order to make use of the <code>glhtxi</code> function, one first
+loads the <code>quantreg</code> and <code>qrinf</code> packages (after
+having installed them). The former can be installed using
+<code>install.packages(&quot;quantreg&quot;)</code>, while the latter is best
+installed using <code>pak::pak(&quot;nathanlaroy/qrinf&quot;)</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Load</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(qrinf)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt; Loading required package: quantreg</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co">#&gt; Warning: package &#39;quantreg&#39; was built under R version 4.4.3</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co">#&gt; Loading required package: SparseM</span></span></code></pre></div>
+<p>We will rely on the <code>mtcars</code> data set to illustrate the
+uses of <code>glhtxi</code>. Below is part of the
+<code>data.frame</code>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(mtcars))</span></code></pre></div>
+<table style="width:100%;">
+<colgroup>
+<col width="26%" />
+<col width="7%" />
+<col width="5%" />
+<col width="7%" />
+<col width="5%" />
+<col width="7%" />
+<col width="8%" />
+<col width="8%" />
+<col width="4%" />
+<col width="4%" />
+<col width="7%" />
+<col width="7%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">mpg</th>
+<th align="right">cyl</th>
+<th align="right">disp</th>
+<th align="right">hp</th>
+<th align="right">drat</th>
+<th align="right">wt</th>
+<th align="right">qsec</th>
+<th align="right">vs</th>
+<th align="right">am</th>
+<th align="right">gear</th>
+<th align="right">carb</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Mazda RX4</td>
+<td align="right">21.0</td>
+<td align="right">6</td>
+<td align="right">160</td>
+<td align="right">110</td>
+<td align="right">3.90</td>
+<td align="right">2.620</td>
+<td align="right">16.46</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">Mazda RX4 Wag</td>
+<td align="right">21.0</td>
+<td align="right">6</td>
+<td align="right">160</td>
+<td align="right">110</td>
+<td align="right">3.90</td>
+<td align="right">2.875</td>
+<td align="right">17.02</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">Datsun 710</td>
+<td align="right">22.8</td>
+<td align="right">4</td>
+<td align="right">108</td>
+<td align="right">93</td>
+<td align="right">3.85</td>
+<td align="right">2.320</td>
+<td align="right">18.61</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">Hornet 4 Drive</td>
+<td align="right">21.4</td>
+<td align="right">6</td>
+<td align="right">258</td>
+<td align="right">110</td>
+<td align="right">3.08</td>
+<td align="right">3.215</td>
+<td align="right">19.44</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">Hornet Sportabout</td>
+<td align="right">18.7</td>
+<td align="right">8</td>
+<td align="right">360</td>
+<td align="right">175</td>
+<td align="right">3.15</td>
+<td align="right">3.440</td>
+<td align="right">17.02</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">Valiant</td>
+<td align="right">18.1</td>
+<td align="right">6</td>
+<td align="right">225</td>
+<td align="right">105</td>
+<td align="right">2.76</td>
+<td align="right">3.460</td>
+<td align="right">20.22</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
+<p>Suppose we wish to model the miles/(US) gallon (<code>mpg</code>) of
+the cars in function of number of cylinders (<code>cyl</code>),
+displacement (cu.in.) (<code>disp</code>) and gross horsepower
+(<code>hp</code>). If we estimate a quantile regression model for a
+dense grid of quantile criteria and plot the resulting sample paths of
+the coefficient estimators, we find the following:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>rqmod <span class="ot">&lt;-</span> <span class="fu">rq</span>(mpg <span class="sc">~</span> cyl <span class="sc">+</span> disp <span class="sc">+</span> hp, <span class="at">tau =</span> <span class="fu">seq</span>(<span class="fl">0.05</span>, <span class="fl">0.95</span>, <span class="fl">0.01</span>), <span class="at">data =</span> mtcars)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">plot</span>(rqmod)</span></code></pre></div>
+<p><img role="img" src="data:image/png;base64,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" /><!-- --></p>
+<p>Suppose the literature states that the effect of <code>cyl</code> is
+twice in magnitude for the 80th percentile as compared to the 20th
+percentile, controlled for <code>disp</code> and <code>hp</code>. Based
+on the visualization, it seems like this could be the case, but we are
+skeptical and wish to quantify the statistical evidence against this
+statement. To that end, we can rephrase the verbal hypothesis as a
+linear restriction on <span class="math inline">\(\boldsymbol{\xi}\)</span>. Specifically, the null
+hypothesis becomes:</p>
+<p><span class="math display">\[
+\begin{align*}
+H_0: &amp;&amp;2\beta_{\text{cyl}}(0.2) &amp;= \beta_{\text{cyl}}(0.8)\\
+\iff&amp;&amp;2\beta_1(0.2) - \beta_1(0.8) &amp;= 0
+\end{align*}
+\]</span></p>
+<p>In order to proceed, we need to translate the above symbolic
+representation into a restriction matrix <span class="math inline">\(\boldsymbol{R}\)</span>, so that <span class="math inline">\(\boldsymbol{R\xi}\)</span> represents the
+left-hand side of the null equation, and a null identity matrix <span class="math inline">\(\boldsymbol{r}\)</span> representing its
+right-hand side. From the model, we know that <span class="math inline">\(\boldsymbol{\xi}=(\beta_0(0.2),
+\beta_1(0.2),\dots,\beta_2(0.8),\beta_3(0.8))&#39;\)</span>, 8 elements
+long (4 coefficients times 2 quantile criteria), so <span class="math inline">\(\boldsymbol{R}\)</span> becomes:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>R <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">0</span>,</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>             <span class="dv">0</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>))</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">0</span>))</span></code></pre></div>
+<p>The <code>glhtxi</code> function requires further that we separately
+specify the <span class="math inline">\(\tau\)</span>-quantiles of
+interest in a simple vector, and a separate <code>formula</code> object
+of the model. We can extract the latter from the previously run instance
+of <code>rq</code>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>taus <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.2</span>, <span class="fl">0.8</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>form <span class="ot">&lt;-</span> <span class="fu">formula</span>(rqmod)</span></code></pre></div>
+<p>We may now run <code>glhtxi</code>, which will efficiently assemble
+the respective asymptotic covariance estimate and return a list of
+values. We leave the argument <code>se</code> unspecified, so it
+defaults to <code>&quot;nid&quot;</code> (i.e., errors assumed non-identically,
+independently distributed).</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">glhtxi</span>(<span class="at">taus =</span> taus, <span class="at">form =</span> form, <span class="at">data =</span> mtcars,</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>       <span class="at">R =</span> R, <span class="at">r =</span> r, <span class="at">se =</span> <span class="st">&quot;nid&quot;</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt; Warning in summary.rq(mod, se = &quot;nid&quot;, cov = T): 2 non-positive fis</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co">#&gt; Warning in summary.rq(xi, U = U, ...): 2 non-positive fis</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt; Warning in summary.rq(xi, U = U, ...): 1 non-positive fis</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt; Warning in summary.rq(mod, se = &quot;nid&quot;, cov = T): 1 non-positive fis</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt; $R</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8]</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co">#&gt; [1,]    0    2    0    0    0   -1    0    0</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co">#&gt; $H0</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="co">#&gt;          [,1]</span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt; [1,] 2.216303</span></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co">#&gt; $Tn</span></span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co">#&gt;          [,1]</span></span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="co">#&gt; [1,] 2.431796</span></span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="co">#&gt; $q</span></span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a><span class="co">#&gt; $p.value</span></span>
+<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a><span class="co">#&gt;           [,1]</span></span>
+<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a><span class="co">#&gt; [1,] 0.1188966</span></span></code></pre></div>
+<p>In the output, we are given a copy of the restriction matrix
+<code>$R</code>, the realized identity under the null <code>$H0</code>
+(i.e., <span class="math inline">\(\boldsymbol{R}\hat{\boldsymbol{\xi}}-\boldsymbol{r}\)</span>),
+the observed test statistic <code>Tn</code>, the degrees of freedom
+<code>q</code>, and the p-value <code>p.value</code>. Here, <span class="math inline">\(p=0.119\)</span>, so we fail to reject the null
+hypothesis.</p>
+<p>We also see that the function has returned a series of warning
+messages. These all derive from <code>summary.rq</code>, which is called
+under the hood iteratively to calculate blocks of the covariance matrix.
+They indicate that a non-positive density was estimated, which the
+function dealt with under the hood (i.e., densities cannot be negative).
+Too many such warnings can indicate a model misspecification problem,
+but a small amount is generally not problematic.</p>
+</div>
+<div id="example-1.2" class="section level3">
+<h3>example 1.2</h3>
+<p>We next illustrate a second example where the null hypothesis
+consists of several identities. For example, assume the literature
+states that the effect of each independent variable is exactly 0.25
+units smaller for the 25th versus the 75th conditional quantile,
+conditional on the others. That is, the following set of null hypothesis
+identities holds:</p>
+<p><span class="math display">\[
+H_0:
+\begin{cases}
+  \beta_1(0.25) - \beta_1(0.75) = -0.25\\
+  \beta_2(0.25) - \beta_2(0.75) = -0.25\\
+  \beta_3(0.25) - \beta_3(0.75) = -0.25
+\end{cases}
+\]</span></p>
+<p>We can translate this into the respective <code>R</code> and
+<code>r</code> matrices as follows, setting <code>taus</code> as well,
+and retaking <code>form</code> from before:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>R <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>           <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>),</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>           <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="sc">-</span><span class="dv">1</span>))</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.25</span>, <span class="sc">-</span><span class="fl">0.25</span>, <span class="sc">-</span><span class="fl">0.25</span>))</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>taus <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="fu">glhtxi</span>(<span class="at">taus =</span> taus, <span class="at">form =</span> form, <span class="at">data =</span> mtcars, <span class="at">R =</span> R, <span class="at">r =</span> r)</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; Warning in summary.rq(xi, U = U, ...): 1 non-positive fis</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; Warning in summary.rq(mod, se = &quot;nid&quot;, cov = T): 1 non-positive fis</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt; $R</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8]</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co">#&gt; [1,]    0    1    0    0    0   -1    0    0</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt; [2,]    0    0    1    0    0    0   -1    0</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt; [3,]    0    0    0    1    0    0    0   -1</span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co">#&gt; $H0</span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="co">#&gt;           [,1]</span></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="co">#&gt; [1,] 2.1989122</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="co">#&gt; [2,] 0.2360242</span></span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="co">#&gt; [3,] 0.2561819</span></span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a><span class="co">#&gt; $Tn</span></span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a><span class="co">#&gt;          [,1]</span></span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a><span class="co">#&gt; [1,] 1959.318</span></span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a><span class="co">#&gt; $q</span></span>
+<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a><span class="co">#&gt; [1] 3</span></span>
+<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a><span class="co">#&gt; $p.value</span></span>
+<span id="cb7-30"><a href="#cb7-30" tabindex="-1"></a><span class="co">#&gt;      [,1]</span></span>
+<span id="cb7-31"><a href="#cb7-31" tabindex="-1"></a><span class="co">#&gt; [1,]    0</span></span></code></pre></div>
+<p>We find very strong evidence against this null hypothesis, and so
+choose to reject it. Based on the observed null identity
+<code>$H0</code>, we see that, indeed, none of the equalities are
+particularly close to 0, which should be the case if the null hypothesis
+actually holds true. The p-value is practically nil.</p>
+</div>
+</div>
+<div id="ghltprocess-general-linear-hypothesis-tests-on-boldsymbolbetatau" class="section level2">
+<h2><code>ghltprocess</code>: general linear hypothesis tests on <span class="math inline">\(\boldsymbol{\beta}(\tau)\)</span></h2>
+<p>In this section, use of <code>glhtprocess</code> is illustrated, with
+special case when <span class="math inline">\(\boldsymbol{r}(\tau)\)</span> is a non-constant
+function.</p>
+<div id="example-2.1" class="section level3">
+<h3>example 2.1</h3>
+<p>Based on the plot from before, one might wonder if the effect of
+<code>hp</code> is nil for all quantiles in the unit interval,
+conditional on <code>cyl</code> and <code>disp</code>. To test this, we
+use <code>glhtprocess</code>. As with <code>glhtxi</code>, the function
+requires that one specifies the restriction matrix <span class="math inline">\(\boldsymbol{R}\)</span> and null identity <span class="math inline">\(\boldsymbol{r}\)</span> (which here takes the form
+of a function). <span class="math inline">\(\boldsymbol{R}\)</span> and
+<span class="math inline">\(\boldsymbol{r}\)</span> have dimensions such
+that <span class="math inline">\(\boldsymbol{R\beta}(\tau)-\boldsymbol{r}\)</span>
+is a legal matrix operation (i.e., <span class="math inline">\(\boldsymbol{R}\)</span> is a <span class="math inline">\(q\times(p+1)\)</span> matrix and <span class="math inline">\(\boldsymbol{r}\)</span> is a <span class="math inline">\(q\times1\)</span> matrix). We entertain the verbal
+hypothesis which states that <span class="math inline">\(\beta_{\text{hp}}(\tau)\)</span> is constant in
+<span class="math inline">\(\tau\)</span>, or symbolically, <span class="math inline">\(\beta_{\text{hp}}(\tau)=0\)</span>. We also need
+to specify the bounds of the continuous closed quantile interval of
+interest. We take <span class="math inline">\([0.05, 0.95]\)</span>,
+trimming off the tails to account for the high uncertainty.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>R <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">0</span>))</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>taus <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.95</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>(processtest <span class="ot">&lt;-</span> <span class="fu">glhtprocess</span>(<span class="at">taus =</span> taus, <span class="at">form =</span> form, <span class="at">data =</span> mtcars, <span class="at">R =</span> R, <span class="at">r =</span> r, <span class="at">verbose =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; $restriction.matrix</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2] [,3] [,4]</span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt; [1,]    0    0    0    1</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="co">#&gt; $lambda</span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="co">#&gt; [1] 361</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="co">#&gt; $q</span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co">#&gt; $Tn</span></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co">#&gt; [1] 5.258319</span></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a><span class="co">#&gt; $critical.value</span></span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="co">#&gt;   alpha  crit</span></span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a><span class="co">#&gt; 1   10%  8.31</span></span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a><span class="co">#&gt; 2    5%  9.90</span></span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a><span class="co">#&gt; 3    1% 13.45</span></span>
+<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a><span class="co">#&gt; $interpolated</span></span>
+<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a><span class="co">#&gt; [1] FALSE</span></span></code></pre></div>
+<p>We find that the obtained statistic is 5.26, which is smaller than
+the critical value associated with the 10% significance level. So, we
+fail to reject the null hypothesis at said significance level. From the
+output, we find that <code>$interpolated</code> is <code>FALSE</code>,
+meaning that the obtained value for <code>$lambda</code> appears in the
+tables by Estrella (2003) and so the critical values are exact. When
+<code>$interpolated</code> returns <code>TRUE</code>, it means that
+<code>$lambda</code> does not appear in the tables by Estrella (2003).
+Consequently, the critical values for the different significance levels
+are linearly interpolated, yielding approximate values.</p>
+<p>Note that a series of warning messages was omitted from this vignette
+for the purpose of readability by setting <code>verbose = FALSE</code>.
+Users should be aware that <code>glhtprocess</code> is prone to
+returning numerous warnings due to the consecutive estimation of
+multiple asymptotic covariance blocks under the hood using
+<code>quantreg::summary.rq</code>. They can be suppressed by setting
+<code>verbose = FALSE</code>, but this is generally not advised. A great
+number of warnings can point to model specification issues, and so
+should be investigated rather than ignored. When
+<code>verbose = TRUE</code>, the number of non-positive density
+estimates is summed in order to provide a compacter warning than the
+native one from <code>quantreg</code>.</p>
+</div>
+<div id="example-2.2" class="section level3">
+<h3>example 2.2</h3>
+<p>As with <code>glhtxi</code>, the function <code>glhtprocess</code>
+allows to test combined null hypotheses. We illustrate this for the
+verbal hypothesis that the effects of <code>disp</code> and
+<code>cyl</code> are both different from zero for the interval <span class="math inline">\(\tau\in[0.05, 0.5]\)</span>, controlled for
+<code>cyl</code>. Symbolically, this may be written as follows:</p>
+<p><span class="math display">\[
+H_0:
+\begin{cases}
+\beta_1(\tau) = 0\\
+\beta_2(\tau) = 0
+\end{cases}
+\]</span></p>
+<p>We define <span class="math inline">\(\boldsymbol{R}\)</span> and
+<span class="math inline">\(\boldsymbol{r}(\tau)\)</span>, and set
+<code>taus</code> to the desired interval, in the code chunk below, and
+run <code>ghltprocess</code>.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>R <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>),</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>           <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>))</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>taus <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.5</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>(processtest <span class="ot">&lt;-</span> <span class="fu">glhtprocess</span>(<span class="at">taus =</span> taus, <span class="at">form =</span> form, <span class="at">data =</span> mtcars, <span class="at">R =</span> R, <span class="at">r =</span> r, <span class="at">verbose =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; $restriction.matrix</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2] [,3] [,4]</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&gt; [1,]    0    0    1    0</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; [2,]    0    0    0    1</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="co">#&gt; $lambda</span></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="co">#&gt; [1] 19</span></span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="co">#&gt; $q</span></span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a><span class="co">#&gt; $Tn</span></span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a><span class="co">#&gt; [1] 368.8862</span></span>
+<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a><span class="co">#&gt; $critical.value</span></span>
+<span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a><span class="co">#&gt;   alpha      crit</span></span>
+<span id="cb9-23"><a href="#cb9-23" tabindex="-1"></a><span class="co">#&gt; 1   10%  9.773799</span></span>
+<span id="cb9-24"><a href="#cb9-24" tabindex="-1"></a><span class="co">#&gt; 2    5% 11.495661</span></span>
+<span id="cb9-25"><a href="#cb9-25" tabindex="-1"></a><span class="co">#&gt; 3    1% 15.315661</span></span>
+<span id="cb9-26"><a href="#cb9-26" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-27"><a href="#cb9-27" tabindex="-1"></a><span class="co">#&gt; $interpolated</span></span>
+<span id="cb9-28"><a href="#cb9-28" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p>We find that we can convincingly reject the null hypothesis. The
+obtained test statistic is 368.89, which is far greater than the
+critical value associated with the 1% significance level. Based on the
+output, we find that <code>$lambda</code> is 19, which does not appear
+in the Estrella tables. Hence, the critical values were calculated by
+means of linear interpolation (<code>$interpolated</code> is
+<code>TRUE</code>). However, because the obtained test statistic is
+nowhere near the interpolated values, we can rest assured that the
+rejection of the null hypothesis is legitimate.</p>
+<p>Note that, again, we suppressed warnings for the purpose of the
+readability of this vignette and so the focus could be on the output
+itself. In making use of <code>glhtprocess</code>, one should not
+blatantly ignore such warnings.</p>
+</div>
+<div id="example-3" class="section level3">
+<h3>example 3</h3>
+<p>Next, let’s consider a case where <span class="math inline">\(q=1\)</span> and <span class="math inline">\(\boldsymbol{r}\)</span> is a non-constant function
+in the interval of <span class="math inline">\(\tau\)</span> considered.
+For the sake of example, suppose <span class="math inline">\(\boldsymbol{r}(\tau,k)=\Phi^{-1}(\tau)/k\)</span>.
+The function <code>glhtprocess</code> conveniently allows to pass a
+function to <code>r</code> with additional arguments to
+<code>r.args</code> (i.e., <code>tau</code> is not explicitly passed,
+only additional parameters if they exist). We set <span class="math inline">\(R=(0, 1, 1, 0)\)</span>, which tests under the
+null whether <span class="math inline">\(\beta_1(\tau)=\beta_2(\tau)\)</span>. We set up as
+follows:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>R <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">0</span>))</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(x,k) <span class="fu">qnorm</span>(x)<span class="sc">/</span>k</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="fu">glhtprocess</span>(<span class="at">taus =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.45</span>), <span class="at">form =</span> form, <span class="at">data =</span> mtcars, <span class="at">R =</span> R,</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>            <span class="at">r =</span> f, <span class="at">r.args =</span> <span class="fu">list</span>(<span class="at">k =</span> <span class="dv">2</span>), <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">#&gt; $restriction.matrix</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2] [,3] [,4]</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; [1,]    0    2    0    0</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="co">#&gt; $lambda</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="co">#&gt; [1] 15.54545</span></span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a><span class="co">#&gt; $q</span></span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="co">#&gt; $Tn</span></span>
+<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a><span class="co">#&gt; [1] 2.26231</span></span>
+<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a><span class="co">#&gt; $critical.value</span></span>
+<span id="cb10-19"><a href="#cb10-19" tabindex="-1"></a><span class="co">#&gt;   alpha      crit</span></span>
+<span id="cb10-20"><a href="#cb10-20" tabindex="-1"></a><span class="co">#&gt; 1   10%  6.874026</span></span>
+<span id="cb10-21"><a href="#cb10-21" tabindex="-1"></a><span class="co">#&gt; 2    5%  8.423377</span></span>
+<span id="cb10-22"><a href="#cb10-22" tabindex="-1"></a><span class="co">#&gt; 3    1% 11.942727</span></span>
+<span id="cb10-23"><a href="#cb10-23" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-24"><a href="#cb10-24" tabindex="-1"></a><span class="co">#&gt; $interpolated</span></span>
+<span id="cb10-25"><a href="#cb10-25" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p>We set <code>k=2</code>, so it is treated as a constant. We could
+also simply have set <code>f &lt;- function(x) qnorm(x)/2</code>,
+leaving <code>r.args</code> unspecified. We find no strong evidence
+against the null hypothesis that <span class="math inline">\(\boldsymbol{R\beta}(\tau)=\boldsymbol{r}(\tau)\)</span>.</p>
+<p>Suppose <span class="math inline">\(k\)</span> is not constant, but
+takes different values depending on <span class="math inline">\(\tau\)</span>. In that case, we can pass a vector
+of appropriate values to <code>r.args</code>. This vector has to have
+length equal to <code>griddensity</code> (default <code>300</code>). The
+values of <span class="math inline">\(\tau\)</span> considered by the
+function are a vector of length equal to <code>griddensity</code> of
+equidistant values in the interval passed to <code>taus</code>. If an
+element of <code>r.args</code> does not have the required length, it is
+recycled until it does. Moreover, the number of additional arguments can
+be arbitrarily large. For example, consider <span class="math inline">\(\boldsymbol{r}(\tau,k,b,h)=\Phi^{-1}(\tau)/k +
+b/h\)</span>, then we can set up as follows:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(x,k,b,h) <span class="fu">qnorm</span>(x)<span class="sc">/</span>k <span class="sc">+</span> b<span class="sc">/</span>h</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="fu">glhtprocess</span>(<span class="at">taus =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.45</span>), <span class="at">form =</span> form, <span class="at">data =</span> mtcars, <span class="at">R =</span> R,</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>            <span class="at">r =</span> f, <span class="at">r.args =</span> <span class="fu">list</span>(<span class="at">k =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">b =</span> <span class="fl">0.4</span>, <span class="at">h=</span><span class="dv">2</span><span class="sc">:</span><span class="dv">15</span>), <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="co">#&gt; $restriction.matrix</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2] [,3] [,4]</span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="co">#&gt; [1,]    0    2    0    0</span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a><span class="co">#&gt; $lambda</span></span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a><span class="co">#&gt; [1] 15.54545</span></span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a><span class="co">#&gt; $q</span></span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a><span class="co">#&gt; $Tn</span></span>
+<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a><span class="co">#&gt; [1] 12.234</span></span>
+<span id="cb11-16"><a href="#cb11-16" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a><span class="co">#&gt; $critical.value</span></span>
+<span id="cb11-18"><a href="#cb11-18" tabindex="-1"></a><span class="co">#&gt;   alpha      crit</span></span>
+<span id="cb11-19"><a href="#cb11-19" tabindex="-1"></a><span class="co">#&gt; 1   10%  6.874026</span></span>
+<span id="cb11-20"><a href="#cb11-20" tabindex="-1"></a><span class="co">#&gt; 2    5%  8.423377</span></span>
+<span id="cb11-21"><a href="#cb11-21" tabindex="-1"></a><span class="co">#&gt; 3    1% 11.942727</span></span>
+<span id="cb11-22"><a href="#cb11-22" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb11-23"><a href="#cb11-23" tabindex="-1"></a><span class="co">#&gt; $interpolated</span></span>
+<span id="cb11-24"><a href="#cb11-24" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p>In this case, the arguments <code>b</code> is treated as constants,
+while <code>k</code> and <code>h</code> are taken to vary with <span class="math inline">\(\tau\)</span> and is recycled until its length is
+equal to <code>griddensity</code> (here, default value
+<code>300</code>). In this case, we do find evidence against the null
+hypothesis, we can reject it at the 1% significance level.</p>
+</div>
+</div>
+<div id="references" class="section level1">
+<h1>References</h1>
+<p>Estrella, A. (2003). Critical values and p values of bessel process
+distributions: Computation and application to structural break tests.
+<em>Econometric Theory, 19</em>(6), 1128–1143. <a href="https://doi.org/10.1017/S0266466603196107" class="uri">https://doi.org/10.1017/S0266466603196107</a></p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
